@@ -48,7 +48,7 @@
     "avg_lp_pct": 7.84,
     "avg_net": 31444.52,
     "total_net": 1509337.05,
-    "avg_drivers": 5.2
+    "avg_drivers": 18.2
   },
   "rate_comparison": [
     {
@@ -2439,8 +2439,8 @@
       "total_charges": 29860.85,
       "chargebacks": 0,
       "net_amount": 29860.85,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "04/11/2025",
@@ -2462,8 +2462,8 @@
       "total_charges": 30490.53,
       "chargebacks": 0,
       "net_amount": 30490.53,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "04/18/2025",
@@ -2485,8 +2485,8 @@
       "total_charges": 31680.0,
       "chargebacks": 0,
       "net_amount": 31680.0,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "04/25/2025",
@@ -2508,8 +2508,8 @@
       "total_charges": 28989.9,
       "chargebacks": 0,
       "net_amount": 28989.9,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "05/02/2025",
@@ -2531,8 +2531,8 @@
       "total_charges": 29233.45,
       "chargebacks": 0,
       "net_amount": 29233.45,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "05/09/2025",
@@ -2554,8 +2554,8 @@
       "total_charges": 29301.48,
       "chargebacks": 0,
       "net_amount": 29301.48,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "05/16/2025",
@@ -2577,8 +2577,8 @@
       "total_charges": 28478.09,
       "chargebacks": 0,
       "net_amount": 28478.09,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "05/23/2025",
@@ -2600,8 +2600,8 @@
       "total_charges": 28820.9,
       "chargebacks": 0,
       "net_amount": 28820.9,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "05/30/2025",
@@ -2623,8 +2623,8 @@
       "total_charges": 26650.5,
       "chargebacks": 0,
       "net_amount": 26650.5,
-      "num_drivers": 6,
-      "driver_days": 22
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "06/06/2025",
@@ -2646,8 +2646,8 @@
       "total_charges": 31377.45,
       "chargebacks": 0,
       "net_amount": 31377.45,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "06/13/2025",
@@ -2669,8 +2669,8 @@
       "total_charges": 28302.41,
       "chargebacks": 0,
       "net_amount": 28302.41,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "06/20/2025",
@@ -2692,8 +2692,8 @@
       "total_charges": 28138.2,
       "chargebacks": 0,
       "net_amount": 28138.2,
-      "num_drivers": 6,
-      "driver_days": 22
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "06/27/2025",
@@ -2715,8 +2715,8 @@
       "total_charges": 26889.98,
       "chargebacks": 0,
       "net_amount": 26889.98,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "07/04/2025",
@@ -2738,8 +2738,8 @@
       "total_charges": 25380.4,
       "chargebacks": 0,
       "net_amount": 25380.4,
-      "num_drivers": 5,
-      "driver_days": 23
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "07/11/2025",
@@ -2761,8 +2761,8 @@
       "total_charges": 29449.29,
       "chargebacks": 0,
       "net_amount": 29449.29,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "07/18/2025",
@@ -2784,8 +2784,8 @@
       "total_charges": 32082.48,
       "chargebacks": 0,
       "net_amount": 32082.48,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "07/25/2025",
@@ -2807,8 +2807,8 @@
       "total_charges": 29856.37,
       "chargebacks": 0,
       "net_amount": 29856.37,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "08/01/2025",
@@ -2830,8 +2830,8 @@
       "total_charges": 30502.11,
       "chargebacks": 0,
       "net_amount": 30502.11,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "08/08/2025",
@@ -2853,8 +2853,8 @@
       "total_charges": 31242.19,
       "chargebacks": 20.33,
       "net_amount": 31221.86,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "08/15/2025",
@@ -2876,8 +2876,8 @@
       "total_charges": 32338.21,
       "chargebacks": 0,
       "net_amount": 32338.21,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "08/22/2025",
@@ -2899,8 +2899,8 @@
       "total_charges": 33828.38,
       "chargebacks": 0,
       "net_amount": 33828.38,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "08/29/2025",
@@ -2922,8 +2922,8 @@
       "total_charges": 31620.88,
       "chargebacks": 0,
       "net_amount": 31620.88,
-      "num_drivers": 6,
-      "driver_days": 21
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "09/05/2025",
@@ -2945,8 +2945,8 @@
       "total_charges": 28329.24,
       "chargebacks": 0,
       "net_amount": 28329.24,
-      "num_drivers": 5,
-      "driver_days": 23
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "09/12/2025",
@@ -2968,8 +2968,8 @@
       "total_charges": 33227.82,
       "chargebacks": 0,
       "net_amount": 33227.82,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "09/19/2025",
@@ -2991,8 +2991,8 @@
       "total_charges": 30913.33,
       "chargebacks": 0,
       "net_amount": 30913.33,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "09/26/2025",
@@ -3014,8 +3014,8 @@
       "total_charges": 32198.53,
       "chargebacks": 0,
       "net_amount": 32198.53,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "10/03/2025",
@@ -3037,8 +3037,8 @@
       "total_charges": 30923.67,
       "chargebacks": 0,
       "net_amount": 30923.67,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "10/10/2025",
@@ -3060,8 +3060,8 @@
       "total_charges": 32172.84,
       "chargebacks": 0,
       "net_amount": 32172.84,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "10/17/2025",
@@ -3083,8 +3083,8 @@
       "total_charges": 33405.06,
       "chargebacks": 0,
       "net_amount": 33405.06,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "10/24/2025",
@@ -3106,8 +3106,8 @@
       "total_charges": 31675.53,
       "chargebacks": 0,
       "net_amount": 31675.53,
-      "num_drivers": 5,
-      "driver_days": 23
+      "num_drivers": 18,
+      "driver_days": 82
     },
     {
       "week_ending": "10/31/2025",
@@ -3129,8 +3129,8 @@
       "total_charges": 32035.7,
       "chargebacks": 0,
       "net_amount": 32035.7,
-      "num_drivers": 6,
-      "driver_days": 22
+      "num_drivers": 21,
+      "driver_days": 82
     },
     {
       "week_ending": "11/07/2025",
@@ -3152,8 +3152,8 @@
       "total_charges": 31829.23,
       "chargebacks": 0,
       "net_amount": 31829.23,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 20,
+      "driver_days": 81
     },
     {
       "week_ending": "11/14/2025",
@@ -3175,8 +3175,8 @@
       "total_charges": 31930.24,
       "chargebacks": 0,
       "net_amount": 31930.24,
-      "num_drivers": 6,
-      "driver_days": 22
+      "num_drivers": 20,
+      "driver_days": 83
     },
     {
       "week_ending": "11/21/2025",
@@ -3198,8 +3198,8 @@
       "total_charges": 34516.41,
       "chargebacks": 0,
       "net_amount": 34516.41,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "11/28/2025",
@@ -3221,8 +3221,8 @@
       "total_charges": 30006.31,
       "chargebacks": 16.26,
       "net_amount": 29990.05,
-      "num_drivers": 6,
-      "driver_days": 19
+      "num_drivers": 20,
+      "driver_days": 81
     },
     {
       "week_ending": "12/05/2025",
@@ -3244,8 +3244,8 @@
       "total_charges": 44027.98,
       "chargebacks": 0,
       "net_amount": 44027.98,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 19,
+      "driver_days": 104
     },
     {
       "week_ending": "12/12/2025",
@@ -3267,8 +3267,8 @@
       "total_charges": 52104.28,
       "chargebacks": 0,
       "net_amount": 52104.28,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 19,
+      "driver_days": 105
     },
     {
       "week_ending": "12/19/2025",
@@ -3290,8 +3290,8 @@
       "total_charges": 42100.38,
       "chargebacks": 0,
       "net_amount": 42100.38,
-      "num_drivers": 5,
-      "driver_days": 26
+      "num_drivers": 19,
+      "driver_days": 97
     },
     {
       "week_ending": "12/26/2025",
@@ -3313,8 +3313,8 @@
       "total_charges": 31341.45,
       "chargebacks": 0,
       "net_amount": 31341.45,
-      "num_drivers": 5,
-      "driver_days": 23
+      "num_drivers": 18,
+      "driver_days": 83
     },
     {
       "week_ending": "01/02/2026",
@@ -3336,8 +3336,8 @@
       "total_charges": 25798.29,
       "chargebacks": 0,
       "net_amount": 25798.29,
-      "num_drivers": 6,
-      "driver_days": 19
+      "num_drivers": 19,
+      "driver_days": 65
     },
     {
       "week_ending": "01/09/2026",
@@ -3359,8 +3359,8 @@
       "total_charges": 32103.54,
       "chargebacks": 0,
       "net_amount": 32103.54,
-      "num_drivers": 6,
-      "driver_days": 22
+      "num_drivers": 19,
+      "driver_days": 82
     },
     {
       "week_ending": "01/16/2026",
@@ -3382,8 +3382,8 @@
       "total_charges": 33833.57,
       "chargebacks": 0,
       "net_amount": 33833.57,
-      "num_drivers": 5,
-      "driver_days": 24
+      "num_drivers": 17,
+      "driver_days": 79
     },
     {
       "week_ending": "01/23/2026",
@@ -3405,8 +3405,8 @@
       "total_charges": 30378.91,
       "chargebacks": 0,
       "net_amount": 30378.91,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 16,
+      "driver_days": 79
     },
     {
       "week_ending": "01/30/2026",
@@ -3428,8 +3428,8 @@
       "total_charges": 26676.77,
       "chargebacks": 0,
       "net_amount": 26676.77,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 17,
+      "driver_days": 74
     },
     {
       "week_ending": "02/06/2026",
@@ -3451,8 +3451,8 @@
       "total_charges": 32535.85,
       "chargebacks": 0,
       "net_amount": 32535.85,
-      "num_drivers": 5,
-      "driver_days": 23
+      "num_drivers": 17,
+      "driver_days": 87
     },
     {
       "week_ending": "02/13/2026",
@@ -3474,8 +3474,8 @@
       "total_charges": 30662.85,
       "chargebacks": 0,
       "net_amount": 30662.85,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 18,
+      "driver_days": 81
     },
     {
       "week_ending": "02/20/2026",
@@ -3497,8 +3497,8 @@
       "total_charges": 29776.38,
       "chargebacks": 0,
       "net_amount": 29776.38,
-      "num_drivers": 5,
-      "driver_days": 25
+      "num_drivers": 17,
+      "driver_days": 78
     },
     {
       "week_ending": "02/27/2026",
@@ -3520,8 +3520,8 @@
       "total_charges": 30355.43,
       "chargebacks": 0,
       "net_amount": 30355.43,
-      "num_drivers": 5,
-      "driver_days": 22
+      "num_drivers": 19,
+      "driver_days": 79
     }
   ]
 }

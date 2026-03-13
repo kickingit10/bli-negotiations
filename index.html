@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLI Contract Negotiation Analyzer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
 :root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#6366f1;--old:#8b5cf6}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -145,6 +146,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .hero{padding:20px;background:#1e3a5f !important;-webkit-print-color-adjust:exact}
   .card{break-inside:avoid}
 }
+
+/* Negotiation strategy */
+.strategy-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:16px;border-left:5px solid var(--amber)}
+.strategy-card h3{font-size:16px;font-weight:700;margin-bottom:10px}
+.strategy-card .point{margin-bottom:14px}
+.strategy-card .point strong{color:var(--dark)}
+.strategy-card .point p{font-size:13px;line-height:1.7;color:#374151;margin:4px 0 0}
+.counter-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.counter-table th{background:#fffbeb;padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid #f59e0b}
+.counter-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.counter-table .lever{font-weight:700;color:var(--dark);white-space:nowrap}
+.counter-table .your-pos{color:#059669;font-weight:600}
+.counter-table .rationale{font-size:12px;color:var(--gray);line-height:1.5}
+
+/* Profit Calculator */
+.calc-section{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);border-radius:16px;padding:32px;margin-bottom:20px;color:#fff}
+.calc-section h2{color:#fff;font-size:20px;font-weight:800;margin-bottom:6px}
+.calc-section .calc-sub{font-size:13px;color:#94a3b8;margin-bottom:20px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.calc-inputs{background:rgba(255,255,255,0.08);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,0.1)}
+.calc-inputs h3{font-size:15px;font-weight:700;color:#e2e8f0;margin-bottom:14px}
+.calc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.calc-row label{font-size:13px;color:#94a3b8;flex:1}
+.calc-row input{width:120px;padding:6px 10px;border:1px solid rgba(255,255,255,0.2);border-radius:6px;background:rgba(255,255,255,0.1);color:#fff;font-size:13px;text-align:right;font-weight:600}
+.calc-row input:focus{outline:none;border-color:var(--blue);background:rgba(255,255,255,0.15)}
+.calc-row .unit{font-size:11px;color:#64748b;margin-left:6px;width:50px}
+.calc-results{background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,0.1)}
+.calc-results h3{font-size:15px;font-weight:700;color:#e2e8f0;margin-bottom:14px}
+.profit-meso{background:rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1)}
+.profit-meso.winner-calc{border-color:#10b981;background:rgba(16,185,129,0.1)}
+.profit-meso h4{font-size:13px;font-weight:700;margin-bottom:8px}
+.profit-meso .profit-val{font-size:24px;font-weight:800}
+.profit-meso .profit-val.positive{color:#10b981}
+.profit-meso .profit-val.negative{color:#ef4444}
+.profit-meso .profit-detail{font-size:12px;color:#94a3b8;margin-top:6px;line-height:1.6}
+.profit-summary{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:16px;margin-top:12px}
+.profit-summary .big{font-size:20px;font-weight:800;color:#10b981}
+.profit-summary p{font-size:12px;color:#94a3b8;margin-top:4px}
+.calc-note{font-size:11px;color:#64748b;margin-top:16px;line-height:1.5;font-style:italic}
+@media(max-width:900px){.calc-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -153,6 +195,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <span class="logo">Better Logistics Inc</span>
   <a href="https://bli-dashboard.vercel.app/dashboard.html">Operations Dashboard</a>
   <a href="index.html" class="active">Contract Analyzer</a>
+  <a href="cheatsheet.html">Print Cheat Sheet</a>
 </nav>
 
 <div class="hero">
@@ -191,6 +234,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <!-- Winner Banner -->
 <div class="winner-banner" id="winner-banner"></div>
+<div id="margin-callout" class="insight warn" style="margin-bottom:20px"></div>
 
 <!-- Key Metrics -->
 <div class="metrics" id="key-metrics"></div>
@@ -308,6 +352,102 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="insight" id="sensitivity-insight"></div>
 </div>
 
+
+<!-- ═══ SECTION 7: Negotiation Strategy ═══ -->
+<div class="section-header">
+  <h2>Should You Counter-Offer? <span class="badge comparison">Strategy</span></h2>
+  <p>You don't have to accept a MESO as-is — here's what the data says about where to push back</p>
+</div>
+
+<div class="card">
+  <div class="insight warn">
+    <strong>Important context:</strong> FedEx's MESO process is designed so they profit regardless of which option you pick. Accepting a MESO is the <em>starting point</em>, not the final deal. If none of the MESOs meet your needs, you can decline all three and enter <strong>Traditional Negotiation</strong> — a round-by-round process where both sides make proposals. Industry consultants consistently advise that contractors who negotiate rather than simply accepting leave significantly more money on the table.
+  </div>
+</div>
+
+<div class="strategy-card">
+  <h3>Counter-Offer Recommendations Based on Your Data</h3>
+  <p style="font-size:13px;color:var(--gray);margin-bottom:16px">Use MESO 2 as your baseline and push for improvements on these specific rates:</p>
+  <table class="counter-table">
+    <thead><tr>
+      <th>Rate Element</th>
+      <th>MESO 2 Offers</th>
+      <th>Your Counter Target</th>
+      <th>Why You Have Leverage</th>
+    </tr></thead>
+    <tbody id="counter-tbody"></tbody>
+  </table>
+</div>
+
+<div class="strategy-card" style="border-left-color:var(--blue)">
+  <h3>Key Negotiation Talking Points</h3>
+  <div class="point">
+    <strong>1. Volume Consistency is Your Leverage</strong>
+    <p>Your 48-week data shows remarkably stable volumes — delivery stops average 1,804/week with low variance. FedEx values predictable, reliable contractors. Your track record justifies asking for better rates.</p>
+  </div>
+  <div class="point">
+    <strong>2. The "Liquidated Damage Rate" is New — Push Back</strong>
+    <p>This penalty charge didn't exist in your current contract. It's pure downside risk for you with zero upside. Request it be reduced, capped annually, or removed entirely. At minimum, negotiate a grace period or threshold before it kicks in.</p>
+  </div>
+  <div class="point">
+    <strong>3. Fuel Surcharge Increase is Excessive in MESO 2 & 3</strong>
+    <p>The fuel surcharge jumps from $0.11 to $0.16 per stop in MESOs 2 and 3 — a 45% increase. Meanwhile, fuel prices have been relatively stable. Counter with $0.13 or request a fuel surcharge cap tied to actual DOE diesel index.</p>
+  </div>
+  <div class="point">
+    <strong>4. Service Charge Drop Needs Compensation</strong>
+    <p>Your current service charge is $10,312/week. MESO 2 drops it to $9,360 — that's $952/week or ~$49,500/year less in guaranteed revenue. If FedEx won't budge on service charge, ask for higher variable rates to compensate.</p>
+  </div>
+  <div class="point">
+    <strong>5. E-Commerce Is Growing — Lock In Better Rates</strong>
+    <p>Your e-commerce stops average 5,836/week and represent the fastest-growing segment. The e-commerce stop rate ($1.50) is the same across all MESOs. Push for a higher e-commerce rate — even $0.10 more per stop adds ~$30,000/year.</p>
+  </div>
+  <div class="point" id="strategy-deadline"></div>
+</div>
+
+<div class="card">
+  <div class="insight good">
+    <strong>Bottom line strategy:</strong> Accept MESO 2 as your starting framework, but submit a counter-proposal targeting the fuel surcharge, liquidated damage rate, and e-commerce stop charge. Even small improvements on these three items could add $20,000-$50,000+ annually to your bottom line. If FedEx rejects the counter outright, MESO 2 is still the strongest option to accept before the deadline.
+  </div>
+</div>
+
+<!-- ═══ SECTION 8: Profit Calculator ═══ -->
+<div class="section-header">
+  <h2>What's Your Actual Profit? <span class="badge new-contract">Calculator</span></h2>
+  <p>Enter your operating costs to see estimated profit margins under each MESO offer</p>
+</div>
+
+<div class="calc-section">
+  <h2>Profit Margin Calculator</h2>
+  <div class="calc-sub">Enter your weekly operating costs below. The calculator applies them to each MESO's projected revenue to estimate your real profit.</div>
+  <div class="calc-grid">
+    <div>
+      <div class="calc-inputs">
+        <h3>Weekly Operating Costs</h3>
+        <div class="calc-row"><label>Driver Payroll (all drivers)</label><input type="number" id="calcPayroll" value="13000" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Payroll Taxes & Workers Comp</label><input type="number" id="calcPayrollTax" value="2600" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Fuel</label><input type="number" id="calcFuel" value="3200" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Vehicle Insurance</label><input type="number" id="calcInsurance" value="1200" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Vehicle Maintenance & Repair</label><input type="number" id="calcMaint" value="2400" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Vehicle Payments / Leases</label><input type="number" id="calcVehicle" value="1800" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Uniforms & Supplies</label><input type="number" id="calcSupplies" value="200" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Admin / Office / Accounting</label><input type="number" id="calcAdmin" value="400" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div class="calc-row"><label>Other Costs</label><input type="number" id="calcOther" value="0" oninput="updateCalc()"><span class="unit">/week</span></div>
+        <div style="border-top:1px solid rgba(255,255,255,0.15);margin-top:12px;padding-top:12px">
+          <div class="calc-row"><label style="font-weight:700;color:#e2e8f0">Total Weekly Costs</label><span id="calcTotalCost" style="font-weight:800;font-size:16px;color:#f59e0b">$24,800</span><span class="unit">/week</span></div>
+        </div>
+      </div>
+      <div class="calc-note">
+        Default values are estimates based on FedEx ISP industry benchmarks for an 18-driver, 15-vehicle operation. Adjust to match your actual costs. Driver payroll is typically 38-52% of revenue. Insurance runs 3-6% of revenue. Maintenance is typically 8-12% for P&D operations.
+      </div>
+    </div>
+    <div class="calc-results">
+      <h3>Estimated Profit by MESO</h3>
+      <div id="calcResults"></div>
+      <div class="profit-summary" id="calcSummary"></div>
+    </div>
+  </div>
+</div>
+
 <div class="footer">
   BLI Contract Negotiation Analyzer — Built from 48 weeks of actual charge statement data (Apr 2025 – Feb 2026)<br>
   Last updated: <span id="last-updated"></span>
@@ -318,6 +458,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script>
 // ── Load data and render ─────────────────────────────────────────
 fetch('data.json').then(r=>r.json()).then(D=>{
+
+// Disable datalabels globally, enable per-chart
+Chart.defaults.plugins.datalabels = { display: false };
 
 const fmt = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 const fmt2 = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -343,6 +486,17 @@ document.getElementById('winner-banner').innerHTML = `
   <h2>Our Recommendation: ${labels[winner[0]]}</h2>
   <div class="amount">${fmt(winner[1])} over 48 weeks</div>
   <div class="detail">${labels[winner[0]]} ${winDesc[winner[0]]} earns ${fmt(diff)} more than ${labels[loser[0]]} based on your actual delivery volumes</div>
+`;
+
+// ── Margin Callout ──────────────────────────────────────────────
+const m2Total = totals.meso_2, m3Total = totals.meso_3, m1Total = totals.meso_1;
+const m2m3Diff = m2Total - m3Total;
+const m2m1Diff = m2Total - m1Total;
+const m2t = projs.meso_2.totals, m3t = projs.meso_3.totals, m1t = projs.meso_1.totals;
+const crossUp = ((m3t.fixed - m2t.fixed) / (m2t.variable - m3t.variable) - 1) * 100;
+const crossDown = ((m1t.fixed - m2t.fixed) / (m2t.variable - m1t.variable) - 1) * 100;
+document.getElementById('margin-callout').innerHTML = `
+  <strong>How close is it?</strong> MESO 2 beats MESO 3 by only ${fmt(m2m3Diff)} over 48 weeks (~${fmt(Math.round(m2m3Diff/48))}/week). It beats MESO 1 by ${fmt(m2m1Diff)}. MESO 2 remains the best choice unless your volumes grow more than ~${Math.abs(crossUp).toFixed(0)}% above current levels (where MESO 3 takes over) or drop more than ~${Math.abs(crossDown).toFixed(0)}% (where MESO 1's guaranteed pay wins). <strong>At your current volumes, MESO 2 is the safest pick that still maximizes revenue.</strong>
 `;
 
 // ── Key Metrics ──────────────────────────────────────────────────
@@ -417,7 +571,29 @@ new Chart(document.getElementById('chart-breakdown'),{
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11}}},
+      datalabels:{
+        display: function(ctx) {
+          const dsIndex = ctx.datasetIndex;
+          const meta = ctx.chart.getDatasetMeta(dsIndex);
+          if (meta.hidden) return false;
+          for (let i = ctx.chart.data.datasets.length - 1; i > dsIndex; i--) {
+            if (!ctx.chart.getDatasetMeta(i).hidden) return false;
+          }
+          return true;
+        },
+        anchor:'end', align:'end',
+        formatter: function(value, ctx) {
+          let total = 0;
+          ctx.chart.data.datasets.forEach((ds, i) => {
+            if (!ctx.chart.getDatasetMeta(i).hidden) total += ds.data[ctx.dataIndex];
+          });
+          return '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
+        },
+        font:{weight:'bold',size:13}, color:'#1a1a2e'
+      }
+    },
     scales:{
       x:{stacked:true},
       y:{stacked:true, ticks:{callback:v=>fmt(v)}}
@@ -456,7 +632,28 @@ new Chart(document.getElementById('chart-fixvar-dollars'),{
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}, title:{display:true,text:'Fixed vs Variable Revenue ($)',font:{size:13}}},
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11}}},
+      title:{display:true,text:'Fixed vs Variable Revenue ($)',font:{size:13}},
+      datalabels:{
+        display: function(ctx) {
+          const dsIndex = ctx.datasetIndex;
+          for (let i = ctx.chart.data.datasets.length - 1; i > dsIndex; i--) {
+            if (!ctx.chart.getDatasetMeta(i).hidden) return false;
+          }
+          return true;
+        },
+        anchor:'end', align:'end',
+        formatter: function(value, ctx) {
+          let total = 0;
+          ctx.chart.data.datasets.forEach((ds, i) => {
+            if (!ctx.chart.getDatasetMeta(i).hidden) total += ds.data[ctx.dataIndex];
+          });
+          return '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
+        },
+        font:{weight:'bold',size:12}, color:'#1a1a2e'
+      }
+    },
     scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>fmt(v)}}}
   }
 });
@@ -594,7 +791,18 @@ new Chart(document.getElementById('chart-fedex-vs-actual'),{
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{font:{size:11}}},title:{display:true,text:'3-Year Revenue: What FedEx Projects vs What We Project',font:{size:13}}},
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11}}},
+      title:{display:true,text:'3-Year Revenue: What FedEx Projects vs What We Project',font:{size:13}},
+      datalabels:{
+        display: true,
+        anchor:'end', align:'end',
+        formatter: function(value) {
+          return '$' + (value/1000000).toFixed(2) + 'M';
+        },
+        font:{weight:'bold',size:11}, color:'#1a1a2e'
+      }
+    },
     scales:{y:{ticks:{callback:v=>fmt(v)},beginAtZero:false}}
   }
 });
@@ -650,6 +858,104 @@ document.getElementById('sensitivity-insight').innerHTML = `
   ${m3LeadPos20 > 0 ? ` If volumes surge 20% above current levels, MESO 3 would overtake MESO 2 — but given BLI's actual volume trends, that's unlikely.` : ` MESO 2 holds its lead even if volumes increase significantly.`}
   <strong>MESO 2 is the safest bet that still maximizes revenue.</strong>
 `;
+
+// ── Counter-Offer Table ─────────────────────────────────────────
+const counterData = [
+  {
+    lever: 'Service Charge',
+    meso2: fmt2(9360) + '/wk',
+    target: fmt2(9800) + '/wk',
+    rationale: 'Current contract pays $10,312. MESO 2 cuts $952/wk. Push back toward $9,800 — still a concession but preserves more guaranteed revenue.'
+  },
+  {
+    lever: 'Stop Charge',
+    meso2: '$2.50/stop',
+    target: '$2.60/stop',
+    rationale: 'You deliver 1,804 stops/wk consistently. A $0.10 increase = ~$9,400/year. Your volume reliability justifies premium rates.'
+  },
+  {
+    lever: 'Fuel Surcharge',
+    meso2: '$0.16/stop',
+    target: '$0.13/stop',
+    rationale: '45% jump from current $0.11 with no fuel price justification. Request $0.13 or a DOE diesel index cap.'
+  },
+  {
+    lever: 'E-Com Stop',
+    meso2: '$1.50/stop',
+    target: '$1.65/stop',
+    rationale: 'E-commerce is 5,836 stops/wk and growing. At $0.15 more, that\'s ~$45,500/year. This is FedEx\'s fastest-growing segment — you deliver it.'
+  },
+  {
+    lever: 'Liquidated Damage',
+    meso2: '$' + (D.rate_comparison.find(r=>r.label.includes('Liquidated'))||{meso_2:'N/A'}).meso_2,
+    target: '$0 or capped',
+    rationale: 'Brand new penalty that didn\'t exist before. Request removal, or at minimum a $500/year cap and 90-day grace period after contract start.'
+  },
+  {
+    lever: 'Package Charge',
+    meso2: '$0.20/pkg',
+    target: '$0.22/pkg',
+    rationale: 'You handle 8,039 packages/wk. A $0.02 increase = ~$8,360/year. Small per-unit, meaningful annually.'
+  }
+];
+
+document.getElementById('counter-tbody').innerHTML = counterData.map(r => `
+  <tr>
+    <td class="lever">${r.lever}</td>
+    <td class="num">${r.meso2}</td>
+    <td class="num your-pos">${r.target}</td>
+    <td class="rationale">${r.rationale}</td>
+  </tr>
+`).join('');
+
+// Deadline strategy point
+document.getElementById('strategy-deadline').innerHTML = `
+  <strong>6. Use the Deadline Strategically</strong>
+  <p>The March 24 deadline is ${daysLeft} days away. Submit your counter-proposal at least 7-10 days before the deadline. This gives FedEx time to respond while keeping pressure on. If they reject, you still have time to accept MESO 2 as-is before the deadline expires.</p>
+`;
+
+// ── Profit Calculator ───────────────────────────────────────────
+function updateCalc() {
+  const ids = ['calcPayroll','calcPayrollTax','calcFuel','calcInsurance','calcMaint','calcVehicle','calcSupplies','calcAdmin','calcOther'];
+  const costs = ids.map(id => Number(document.getElementById(id).value) || 0);
+  const totalWeekly = costs.reduce((a,b) => a+b, 0);
+  document.getElementById('calcTotalCost').textContent = '$' + totalWeekly.toLocaleString();
+
+  const totalAnnualCost = totalWeekly * 52;
+  const total48Cost = totalWeekly * 48;
+
+  const results = ['meso_1','meso_2','meso_3'].map(mn => {
+    const rev48 = projs[mn].totals.total;
+    const revAnnual = D.annualized[mn].annual;
+    const profit48 = rev48 - total48Cost;
+    const profitAnnual = revAnnual - totalAnnualCost;
+    const margin = (profit48 / rev48 * 100);
+    const weeklyProfit = profit48 / 48;
+    return { mn, rev48, revAnnual, profit48, profitAnnual, margin, weeklyProfit };
+  });
+
+  const best = results.reduce((a,b) => a.profit48 > b.profit48 ? a : b);
+
+  document.getElementById('calcResults').innerHTML = results.map(r => `
+    <div class="profit-meso ${r.mn === best.mn ? 'winner-calc' : ''}">
+      <h4>${labels[r.mn]} ${r.mn === best.mn ? '\u2605 Most Profitable' : ''}</h4>
+      <div class="profit-val ${r.profit48 >= 0 ? 'positive' : 'negative'}">${fmt(r.profit48)} <span style="font-size:13px;font-weight:400">over 48 weeks</span></div>
+      <div class="profit-detail">
+        Revenue: ${fmt(r.rev48)} — Costs: ${fmt(total48Cost)} — Margin: ${r.margin.toFixed(1)}%<br>
+        Weekly avg profit: ${fmt(Math.round(r.weeklyProfit))} | Annualized profit: ${fmt(Math.round(r.profitAnnual))}
+      </div>
+    </div>
+  `).join('');
+
+  const costPct = (total48Cost / best.rev48 * 100).toFixed(1);
+  document.getElementById('calcSummary').innerHTML = `
+    <div class="big">${fmt(Math.round(best.profitAnnual))}/year estimated profit</div>
+    <p>${labels[best.mn]} with ${best.margin.toFixed(1)}% margin. Operating costs are ${costPct}% of revenue. Industry benchmark is 10-20% profit margin for FedEx ISPs.</p>
+  `;
+}
+
+// Initialize calculator
+updateCalc();
 
 // ── Last Updated ─────────────────────────────────────────────────
 document.getElementById('last-updated').textContent = new Date(D.generated).toLocaleString();

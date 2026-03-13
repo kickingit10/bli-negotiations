@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLI Contract Negotiation — Cheat Sheet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a2e;max-width:800px;margin:0 auto;padding:24px;font-size:13px;line-height:1.6}
+h1{font-size:20px;font-weight:800;margin-bottom:4px}
+h2{font-size:15px;font-weight:700;margin:16px 0 8px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}
+.deadline{background:#fef3c7;border:2px solid #f59e0b;border-radius:8px;padding:10px 16px;text-align:center;font-weight:700;font-size:15px;margin:12px 0}
+.rec{background:#f0fdf4;border:2px solid #059669;border-radius:8px;padding:14px;margin:12px 0}
+.rec h3{font-size:16px;color:#059669;margin-bottom:4px}
+.rec .big{font-size:24px;font-weight:800;color:#1a1a2e}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#f8fafc;padding:6px 8px;text-align:left;font-weight:700;border-bottom:2px solid #e2e8f0;font-size:11px}
+td{padding:5px 8px;border-bottom:1px solid #f1f5f9}
+.best{background:#f0fdf4;font-weight:700;color:#059669}
+.counter{background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:12px;margin:8px 0}
+.counter h3{font-size:14px;margin-bottom:6px}
+.counter ol{padding-left:18px}
+.counter li{margin-bottom:6px}
+.footer{margin-top:16px;padding-top:8px;border-top:1px solid #e2e8f0;font-size:11px;color:#6b7280;text-align:center}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media print{
+  body{padding:12px;font-size:12px}
+  .no-print{display:none}
+  .deadline{background:#fff;border:2px solid #000}
+  .rec{background:#fff;border:2px solid #000}
+}
+</style>
+</head>
+<body>
+<div class="no-print" style="margin-bottom:16px">
+  <a href="index.html" style="color:#2563eb;font-size:13px">&larr; Back to Dashboard</a>
+  <button onclick="window.print()" style="float:right;padding:8px 20px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer">Print This Page</button>
+</div>
+
+<h1>BLI Contract Negotiation &mdash; Quick Reference</h1>
+<p style="color:#6b7280">Better Logistics Inc &bull; Agreement C8892307 &bull; Prepared from 48 weeks of actual data</p>
+
+<div class="deadline" id="deadline"></div>
+
+<div class="rec">
+  <h3>Recommendation: MESO 2</h3>
+  <div class="big" id="rec-amount"></div>
+  <p id="rec-detail"></p>
+</div>
+
+<div class="two-col">
+  <div>
+    <h2>Rate Comparison: Current vs MESO 2</h2>
+    <table id="rate-table"></table>
+  </div>
+  <div>
+    <h2>Revenue Projections</h2>
+    <table id="proj-table"></table>
+    <div class="counter">
+      <h3>Top 3 Counter-Offer Targets</h3>
+      <ol>
+        <li><strong>Fuel Surcharge:</strong> Push $0.16 &rarr; $0.13 (45% jump is unjustified)</li>
+        <li><strong>Liquidated Damage:</strong> New penalty &mdash; request removal or annual cap</li>
+        <li><strong>E-Com Stop Rate:</strong> Push $1.50 &rarr; $1.65 (+$45K/yr at your volumes)</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<h2>Key Volume Stats (Your Actual Data)</h2>
+<table id="vol-table"></table>
+
+<p style="margin-top:12px;font-size:12px;color:#6b7280"><strong>Full interactive analysis &amp; profit calculator:</strong> bli-negotiations.vercel.app</p>
+
+<div class="footer">
+  BLI Contract Negotiation Cheat Sheet &mdash; Generated from 48 weeks of charge statement data (Apr 2025 &ndash; Feb 2026)
+</div>
+
+<script>
+fetch('data.json').then(r=>r.json()).then(D=>{
+  const fmt=n=>'$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+  const fmt2=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const deadline=new Date('2026-03-24');
+  const daysLeft=Math.ceil((deadline-new Date())/(1000*60*60*24));
+  document.getElementById('deadline').textContent='Decision Deadline: March 24, 2026 \u2014 '+(daysLeft > 0 ? daysLeft+' days left' : 'DEADLINE PASSED');
+
+  const m2=D.projections.meso_2.totals.total;
+  const m1=D.projections.meso_1.totals.total;
+  const m3=D.projections.meso_3.totals.total;
+  document.getElementById('rec-amount').textContent=fmt(m2)+' projected (48 weeks)';
+  document.getElementById('rec-detail').textContent='Beats MESO 1 by '+fmt(m2-m1)+' and MESO 3 by '+fmt(m2-m3)+'. Annualized: '+fmt(D.annualized.meso_2.annual)+'. 3-year estimate: '+fmt(D.annualized.meso_2.three_year_actual_based)+'.';
+
+  let rateHtml='<tr><th>Rate</th><th>Current</th><th>MESO 2</th></tr>';
+  D.rate_comparison.forEach(r=>{
+    const isBest=r.meso_2>r.current;
+    rateHtml+='<tr><td>'+r.label+'</td><td>'+(r.current==='N/A'?'\u2014':(r.current>=100?fmt(r.current):fmt2(r.current)))+'</td><td class="'+(isBest?'best':'')+'">'+(r.meso_2==='N/A'?'\u2014':(r.meso_2>=100?fmt(r.meso_2):fmt2(r.meso_2)))+'</td></tr>';
+  });
+  document.getElementById('rate-table').innerHTML=rateHtml;
+
+  let projHtml='<tr><th></th><th>MESO 1</th><th>MESO 2</th><th>MESO 3</th></tr>';
+  projHtml+='<tr><td>48-Week Total</td><td>'+fmt(m1)+'</td><td class="best">'+fmt(m2)+'</td><td>'+fmt(m3)+'</td></tr>';
+  projHtml+='<tr><td>Annualized</td><td>'+fmt(D.annualized.meso_1.annual)+'</td><td class="best">'+fmt(D.annualized.meso_2.annual)+'</td><td>'+fmt(D.annualized.meso_3.annual)+'</td></tr>';
+  projHtml+='<tr><td>3-Year (our est.)</td><td>'+fmt(D.annualized.meso_1.three_year_actual_based)+'</td><td class="best">'+fmt(D.annualized.meso_2.three_year_actual_based)+'</td><td>'+fmt(D.annualized.meso_3.three_year_actual_based)+'</td></tr>';
+  projHtml+='<tr><td>3-Year (FedEx est.)</td><td>'+fmt(D.annualized.meso_1.fedex_3yr_projection)+'</td><td>'+fmt(D.annualized.meso_2.fedex_3yr_projection)+'</td><td>'+fmt(D.annualized.meso_3.fedex_3yr_projection)+'</td></tr>';
+  document.getElementById('proj-table').innerHTML=projHtml;
+
+  const vs=D.volume_stats;
+  document.getElementById('vol-table').innerHTML=
+    '<tr><th>Metric</th><th>Value</th><th>Metric</th><th>Value</th></tr>'+
+    '<tr><td>Weeks Analyzed</td><td><strong>'+vs.weeks+'</strong></td><td>Avg Drivers/Wk</td><td><strong>'+vs.avg_drivers+'</strong></td></tr>'+
+    '<tr><td>Avg Del Stops/Wk</td><td><strong>'+vs.avg_del_stops.toLocaleString()+'</strong></td><td>Avg Del Pkgs/Wk</td><td><strong>'+vs.avg_del_pkgs.toLocaleString()+'</strong></td></tr>'+
+    '<tr><td>Avg E-Com Stops/Wk</td><td><strong>'+vs.avg_ecom_stops.toLocaleString()+'</strong></td><td>Avg LP Mix</td><td><strong>'+vs.avg_lp_pct+'%</strong></td></tr>'+
+    '<tr><td>Avg Weekly Revenue</td><td><strong>'+fmt(vs.avg_net)+'</strong></td><td>Total Revenue (48wk)</td><td><strong>'+fmt(vs.total_net)+'</strong></td></tr>';
+});
+</script>
+</body>
+</html>
