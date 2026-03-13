@@ -327,13 +327,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <!-- ═══ SECTION 5: FedEx vs Reality ═══ -->
 <div class="section-header">
-  <h2>FedEx's Numbers vs Our Numbers <span class="badge comparison">Comparison</span></h2>
-  <p>FedEx provides 3-year revenue projections in each MESO — but they use their own volume assumptions, not your actuals</p>
+  <h2>Are FedEx's Revenue Projections Realistic? <span class="badge comparison">Reality Check</span></h2>
+  <p>FedEx includes 3-year revenue estimates in each MESO, but they assume higher delivery volumes than BLI actually handles — here's what you'd really earn</p>
 </div>
 
 <div class="card">
   <div class="insight warn">
-    <strong>Why are there two sets of numbers?</strong> FedEx included 3-year revenue projections in each MESO offer document. Those are the purple bars. But FedEx assumes higher volumes than BLI actually delivers. So we calculated our own projections (red bars) using your real volume data. The red bars are the more realistic estimate of what you'll actually earn.
+    <strong>How to read this chart:</strong> Each MESO has two bars. The <span style="color:#6366f1;font-weight:700">purple bar</span> is what FedEx <em>says</em> you'll earn over 3 years — but those numbers are inflated because FedEx assumes higher delivery volumes than you actually handle. The <span style="color:#ef4444;font-weight:700">red bar</span> is our projection using your <em>real</em> 48 weeks of volume data. <strong>The red bars are the realistic numbers.</strong> The gap between them shows how much FedEx is overestimating.
   </div>
   <div class="chart-container"><canvas id="chart-fedex-vs-actual"></canvas></div>
   <div class="insight good" id="fedex-insight"></div>
@@ -460,6 +460,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 fetch('data.json').then(r=>r.json()).then(D=>{
 
 // Disable datalabels globally, enable per-chart
+Chart.register(ChartDataLabels);
 Chart.defaults.plugins.datalabels = { display: false };
 
 const fmt = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
@@ -616,7 +617,20 @@ new Chart(document.getElementById('chart-fixvar'),{
     responsive:true, maintainAspectRatio:false,
     plugins:{
       legend:{display:false},
-      title:{display:true,text:'Fixed/Variable Split by MESO',font:{size:13}}
+      title:{display:true,text:'Fixed/Variable Split by MESO',font:{size:13}},
+      datalabels:{
+        display: true,
+        formatter: function(value, ctx) {
+          const ds = ctx.chart.data.datasets[ctx.datasetIndex];
+          const total = ds.data.reduce((a,b) => a+b, 0);
+          const pct = (value / total * 100).toFixed(0);
+          const label = ctx.dataIndex === 0 ? 'Fixed' : 'Variable';
+          return label + '\n' + pct + '%';
+        },
+        color: '#fff',
+        font: {weight:'bold', size:11},
+        textAlign: 'center'
+      }
     }
   }
 });
@@ -915,7 +929,7 @@ document.getElementById('strategy-deadline').innerHTML = `
 `;
 
 // ── Profit Calculator ───────────────────────────────────────────
-function updateCalc() {
+window.updateCalc = function() {
   const ids = ['calcPayroll','calcPayrollTax','calcFuel','calcInsurance','calcMaint','calcVehicle','calcSupplies','calcAdmin','calcOther'];
   const costs = ids.map(id => Number(document.getElementById(id).value) || 0);
   const totalWeekly = costs.reduce((a,b) => a+b, 0);
@@ -955,7 +969,7 @@ function updateCalc() {
 }
 
 // Initialize calculator
-updateCalc();
+window.updateCalc();
 
 // ── Last Updated ─────────────────────────────────────────────────
 document.getElementById('last-updated').textContent = new Date(D.generated).toLocaleString();
