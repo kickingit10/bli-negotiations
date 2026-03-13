@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C8882435 Performance vs Projected</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
+<style>
+:root{--blue:#2563eb;--purple:#7c3aed;--green:#059669;--orange:#d97706;--red:#dc2626;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--meso1:#3b82f6;--meso2:#8b5cf6;--meso3:#f59e0b;--actual:#059669}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark)}
+.dash{max-width:1400px;margin:0 auto;padding:20px}
+header{margin-bottom:24px}
+header h1{font-size:22px;font-weight:700}
+header .sub{font-size:12px;color:var(--gray);margin-top:2px}
+.back-link{font-size:13px;color:var(--blue);text-decoration:none;display:inline-block;margin-bottom:12px}
+.back-link:hover{text-decoration:underline}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.kpi .lbl{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.kpi .val{font-size:22px;font-weight:700;margin:4px 0}
+.kpi .chg{font-size:12px;font-weight:600}
+.kpi .up{color:var(--green)}.kpi .down{color:var(--red)}.kpi .flat{color:var(--gray)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--dark)}
+.card canvas{max-height:340px}
+.card-full{grid-column:1/-1}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;font-size:12px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8fafc;padding:8px 6px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:7px 6px;border-bottom:1px solid #f1f5f9}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover{background:#f8fafc}
+.highlight{font-weight:700}
+.positive{color:var(--green)}.negative{color:var(--red)}
+
+.insight-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px;margin-bottom:16px;font-size:13px;line-height:1.7;color:#1e40af}
+.insight-box strong{color:#1e3a8a}
+
+@media(max-width:900px){
+  .grid-2{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .dash{padding:12px}
+}
+</style>
+</head>
+<body>
+<div class="dash">
+<a href="index.html" class="back-link">&larr; Back to Negotiations Dashboard</a>
+<header>
+  <h1>C8882435 Contract Performance</h1>
+  <div class="sub">Actual weekly settlement vs MESO projected revenue &middot; <span id="dateRange"></span></div>
+</header>
+
+<div id="insightBox" class="insight-box"></div>
+<div id="kpiRow" class="kpi-row"></div>
+
+<div class="grid-2">
+  <div class="card card-full">
+    <h3>Weekly Revenue: Actual vs Projected</h3>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--actual)"></div> Actual (C8882435)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meso1)"></div> MESO 1 Projected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meso2)"></div> MESO 2 Projected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meso3)"></div> MESO 3 Projected</div>
+    </div>
+    <canvas id="cTimeline"></canvas>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Cumulative Revenue Gap</h3>
+    <canvas id="cCumulative"></canvas>
+  </div>
+  <div class="card">
+    <h3>Average Weekly Difference</h3>
+    <canvas id="cAvgDiff"></canvas>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Revenue Component Breakdown (Avg/Week)</h3>
+    <canvas id="cComponents"></canvas>
+  </div>
+  <div class="card">
+    <h3>Actual vs Best MESO by Week</h3>
+    <canvas id="cBestMeso"></canvas>
+  </div>
+</div>
+
+<div class="card card-full" style="margin-bottom:16px">
+  <h3>Week-by-Week Comparison</h3>
+  <div style="overflow-x:auto">
+    <table id="weeklyTable">
+      <thead>
+        <tr>
+          <th>Week Ending</th>
+          <th style="text-align:right">Actual</th>
+          <th style="text-align:right">MESO 1</th>
+          <th style="text-align:right">vs MESO 1</th>
+          <th style="text-align:right">MESO 2</th>
+          <th style="text-align:right">vs MESO 2</th>
+          <th style="text-align:right">MESO 3</th>
+          <th style="text-align:right">vs MESO 3</th>
+        </tr>
+      </thead>
+      <tbody id="weeklyBody"></tbody>
+      <tfoot id="weeklyFoot"></tfoot>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+const fm=v=>'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmd=v=>(v>=0?'+':'-')+fm(v);
+
+let NEG, OPS, charts={};
+
+async function init(){
+  const [negR, opsR]=await Promise.all([fetch('data.json'),fetch('https://bli-dashboard.vercel.app/data.json')]);
+  NEG=await negR.json();
+  OPS=await opsR.json();
+  render();
+}
+
+function render(){
+  const actuals={};
+  OPS.weeks.forEach(w=>{actuals[w.we]=w});
+
+  // Build comparison data for overlapping weeks
+  const weeks=[];
+  NEG.projections.meso_1.weekly.forEach((m1,i)=>{
+    const we=m1.week_ending;
+    if(!actuals[we]) return;
+    const m2=NEG.projections.meso_2.weekly[i];
+    const m3=NEG.projections.meso_3.weekly[i];
+    weeks.push({
+      we,
+      actual:actuals[we].net,
+      meso1:m1.total,
+      meso2:m2.total,
+      meso3:m3.total,
+      m1_detail:m1,
+      m2_detail:m2,
+      m3_detail:m3,
+      actual_detail:actuals[we]
+    });
+  });
+
+  document.getElementById('dateRange').textContent=weeks[0].we+' — '+weeks[weeks.length-1].we+' ('+weeks.length+' weeks with actual data)';
+
+  // Compute summary stats
+  const totalActual=weeks.reduce((s,w)=>s+w.actual,0);
+  const totalM1=weeks.reduce((s,w)=>s+w.meso1,0);
+  const totalM2=weeks.reduce((s,w)=>s+w.meso2,0);
+  const totalM3=weeks.reduce((s,w)=>s+w.meso3,0);
+  const avgActual=totalActual/weeks.length;
+  const avgM1=totalM1/weeks.length;
+  const avgM2=totalM2/weeks.length;
+  const avgM3=totalM3/weeks.length;
+  const bestMesoTotal=Math.max(totalM1,totalM2,totalM3);
+  const bestMesoName=bestMesoTotal===totalM1?'MESO 1':bestMesoTotal===totalM2?'MESO 2':'MESO 3';
+
+  // Insight box
+  const diffVsBest=totalActual-bestMesoTotal;
+  const pctDiff=((diffVsBest/bestMesoTotal)*100).toFixed(1);
+  const weeksActualWins=weeks.filter(w=>w.actual>=Math.max(w.meso1,w.meso2,w.meso3)).length;
+  document.getElementById('insightBox').innerHTML=
+    `<strong>Key Insight:</strong> Over ${weeks.length} weeks of actual data, C8882435 generated <strong>${fm(totalActual)}</strong> in net settlement — `+
+    (diffVsBest>0
+      ?`<strong>${fm(diffVsBest)} more</strong> (+${pctDiff}%) than the best MESO option (${bestMesoName} at ${fm(bestMesoTotal)}). The current contract outperformed projections in <strong>${weeksActualWins} of ${weeks.length}</strong> weeks.`
+      :`<strong>${fm(Math.abs(diffVsBest))} less</strong> (${pctDiff}%) than the best MESO option (${bestMesoName} at ${fm(bestMesoTotal)}). The current contract underperformed projections in <strong>${weeks.length-weeksActualWins} of ${weeks.length}</strong> weeks.`);
+
+  // KPI cards
+  document.getElementById('kpiRow').innerHTML=[
+    {l:'Actual Total',v:fm(totalActual),sub:fm(avgActual)+'/wk avg'},
+    {l:'vs '+bestMesoName,v:fmd(diffVsBest),sub:pctDiff+'% '+(diffVsBest>=0?'above':'below'),cls:diffVsBest>=0?'up':'down'},
+    {l:'Weeks Outperforming',v:weeksActualWins+'/'+weeks.length,sub:Math.round(weeksActualWins/weeks.length*100)+'% of weeks'},
+    {l:'Avg Weekly Advantage',v:fmd(diffVsBest/weeks.length),sub:'per week vs '+bestMesoName,cls:diffVsBest>=0?'up':'down'}
+  ].map(k=>`<div class="kpi"><div class="lbl">${k.l}</div><div class="val ${k.cls||''}">${k.v}</div><div class="chg flat">${k.sub}</div></div>`).join('');
+
+  // Charts
+  Object.values(charts).forEach(c=>{if(c)c.destroy()});
+  charts={};
+
+  const labels=weeks.map(w=>w.we);
+
+  // Timeline chart
+  charts.timeline=new Chart(document.getElementById('cTimeline'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Actual',data:weeks.map(w=>w.actual),borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.1)',borderWidth:3,fill:true,tension:0.3,pointRadius:4},
+        {label:'MESO 1',data:weeks.map(w=>w.meso1),borderColor:'#3b82f6',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2},
+        {label:'MESO 2',data:weeks.map(w=>w.meso2),borderColor:'#8b5cf6',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2},
+        {label:'MESO 3',data:weeks.map(w=>w.meso3),borderColor:'#f59e0b',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>' '+ctx.dataset.label+': $'+ctx.raw.toLocaleString()}}},
+      scales:{y:{ticks:{callback:v=>'$'+v.toLocaleString()},grid:{color:'#f1f5f9'}},x:{ticks:{maxRotation:45,font:{size:10}},grid:{display:false}}}
+    }
+  });
+
+  // Cumulative gap chart
+  let cumActual=0,cumM1=0,cumM2=0,cumM3=0;
+  const cumData=weeks.map(w=>{
+    cumActual+=w.actual;cumM1+=w.meso1;cumM2+=w.meso2;cumM3+=w.meso3;
+    return{cumActual,gapM1:cumActual-cumM1,gapM2:cumActual-cumM2,gapM3:cumActual-cumM3};
+  });
+  charts.cumulative=new Chart(document.getElementById('cCumulative'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'vs MESO 1',data:cumData.map(d=>d.gapM1),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.1)',borderWidth:2,fill:true,tension:0.3},
+        {label:'vs MESO 2',data:cumData.map(d=>d.gapM2),borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',borderWidth:2,fill:true,tension:0.3},
+        {label:'vs MESO 3',data:cumData.map(d=>d.gapM3),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.1)',borderWidth:2,fill:true,tension:0.3}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:11}}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmd(ctx.raw)}}},
+      scales:{y:{ticks:{callback:v=>(v>=0?'+':'')+fm(v)},grid:{color:'#f1f5f9'}},x:{ticks:{maxRotation:45,font:{size:10}},grid:{display:false}}}
+    }
+  });
+
+  // Avg weekly difference bar chart
+  charts.avgDiff=new Chart(document.getElementById('cAvgDiff'),{
+    type:'bar',
+    data:{
+      labels:['vs MESO 1','vs MESO 2','vs MESO 3'],
+      datasets:[{
+        data:[avgActual-avgM1,avgActual-avgM2,avgActual-avgM3],
+        backgroundColor:[(avgActual-avgM1)>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)',(avgActual-avgM2)>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)',(avgActual-avgM3)>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)'],
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmd(ctx.raw)+'/week'}}},
+      scales:{y:{ticks:{callback:v=>(v>=0?'+':'')+fm(v)},grid:{color:'#f1f5f9'}},x:{grid:{display:false}}}
+    }
+  });
+
+  // Component breakdown (stacked bar)
+  const componentKeys=['service','stop','package','fuel','lp_mix','ecom_stop','ecom_pkg','apparel','vehicle_brand'];
+  const componentLabels=['Service','Stop','Package','Fuel','LP Mix','E-Com Stop','E-Com Pkg','Apparel','Vehicle'];
+  const componentColors=['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#ef4444','#10b981','#6366f1','#ec4899','#84cc16'];
+  const avgComponents={};
+  ['meso_1','meso_2','meso_3'].forEach(m=>{
+    avgComponents[m]={};
+    componentKeys.forEach(k=>{
+      const matchingWeeks=NEG.projections[m].weekly.filter(w=>actuals[w.week_ending]);
+      avgComponents[m][k]=matchingWeeks.reduce((s,w)=>s+(w[k]||0),0)/matchingWeeks.length;
+    });
+  });
+  charts.components=new Chart(document.getElementById('cComponents'),{
+    type:'bar',
+    data:{
+      labels:['MESO 1','MESO 2','MESO 3'],
+      datasets:componentKeys.map((k,i)=>({
+        label:componentLabels[i],
+        data:[avgComponents.meso_1[k],avgComponents.meso_2[k],avgComponents.meso_3[k]],
+        backgroundColor:componentColors[i],
+        borderRadius:2
+      }))
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': $'+Math.round(ctx.raw).toLocaleString()}}},
+      scales:{y:{stacked:true,ticks:{callback:v=>'$'+v.toLocaleString()},grid:{color:'#f1f5f9'}},x:{stacked:true,grid:{display:false}}}
+    }
+  });
+
+  // Best MESO comparison per week
+  const bestMesoData=weeks.map(w=>{
+    const best=Math.max(w.meso1,w.meso2,w.meso3);
+    return w.actual-best;
+  });
+  charts.bestMeso=new Chart(document.getElementById('cBestMeso'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Actual vs Best MESO',
+        data:bestMesoData,
+        backgroundColor:bestMesoData.map(v=>v>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)'),
+        borderRadius:4
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmd(ctx.raw)+' vs best MESO option'}}},
+      scales:{y:{ticks:{callback:v=>(v>=0?'+':'')+fm(v)},grid:{color:'#f1f5f9'}},x:{ticks:{maxRotation:45,font:{size:10}},grid:{display:false}}}
+    }
+  });
+
+  // Weekly comparison table
+  let tBody='',totA=0,totM1t=0,totM2t=0,totM3t=0;
+  weeks.forEach(w=>{
+    totA+=w.actual;totM1t+=w.meso1;totM2t+=w.meso2;totM3t+=w.meso3;
+    const d1=w.actual-w.meso1,d2=w.actual-w.meso2,d3=w.actual-w.meso3;
+    tBody+=`<tr>
+      <td>${w.we}</td>
+      <td class="num highlight">${fm(w.actual)}</td>
+      <td class="num">${fm(w.meso1)}</td>
+      <td class="num ${d1>=0?'positive':'negative'}">${fmd(d1)}</td>
+      <td class="num">${fm(w.meso2)}</td>
+      <td class="num ${d2>=0?'positive':'negative'}">${fmd(d2)}</td>
+      <td class="num">${fm(w.meso3)}</td>
+      <td class="num ${d3>=0?'positive':'negative'}">${fmd(d3)}</td>
+    </tr>`;
+  });
+  document.getElementById('weeklyBody').innerHTML=tBody;
+  const td1=totA-totM1t,td2=totA-totM2t,td3=totA-totM3t;
+  document.getElementById('weeklyFoot').innerHTML=`<tr style="font-weight:700;border-top:2px solid var(--dark)">
+    <td>TOTAL</td>
+    <td class="num">${fm(totA)}</td>
+    <td class="num">${fm(totM1t)}</td>
+    <td class="num ${td1>=0?'positive':'negative'}">${fmd(td1)}</td>
+    <td class="num">${fm(totM2t)}</td>
+    <td class="num ${td2>=0?'positive':'negative'}">${fmd(td2)}</td>
+    <td class="num">${fm(totM3t)}</td>
+    <td class="num ${td3>=0?'positive':'negative'}">${fmd(td3)}</td>
+  </tr>`;
+}
+
+init();
+</script>
+</body>
+</html>
