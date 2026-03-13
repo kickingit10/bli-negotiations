@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use These Tools — BLI Negotiations</title>
+<style>
+:root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;
+--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#8b5cf6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark)}
+
+.topnav{background:#1a1a2e;padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.topnav a{color:#94a3b8;text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;transition:all .15s}
+.topnav a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.topnav a.active{color:#fff;background:var(--blue)}
+.topnav .logo{color:#fff;font-weight:800;font-size:15px;letter-spacing:-0.5px;margin-right:auto}
+
+.hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:36px 20px 56px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:#f0f2f5;border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
+.hero h1{font-size:24px;font-weight:800;margin-bottom:4px}
+.hero .sub{font-size:14px;opacity:0.9;max-width:700px;margin:0 auto}
+
+.container{max-width:900px;margin:-20px auto 0;padding:0 20px 60px;position:relative;z-index:1}
+
+.section{background:#fff;border-radius:12px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px}
+.section h2{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.section h2 .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+.section h2 .chevron{font-size:14px;margin-left:auto;transition:transform .2s;color:var(--gray)}
+.section.collapsed .section-body{display:none}
+.section.collapsed h2 .chevron{transform:rotate(-90deg)}
+
+.section-body{margin-top:4px}
+.section-body p{font-size:13px;line-height:1.7;color:#374151;margin-bottom:12px}
+.section-body p:last-child{margin-bottom:0}
+
+/* Page cards */
+.page-map{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.page-card{border:2px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;text-decoration:none;color:inherit;display:block}
+.page-card:hover{border-color:var(--blue);box-shadow:0 4px 12px rgba(37,99,235,.12);transform:translateY(-1px)}
+.page-card .step{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.page-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.page-card .page-desc{font-size:12px;color:var(--gray);line-height:1.5}
+.page-card .page-answers{font-size:11px;color:var(--green);font-weight:600;margin-top:8px}
+.page-card.highlight{border-color:var(--blue);background:#eff6ff}
+
+/* Concept blocks */
+.concept{border-left:3px solid var(--blue);padding:10px 14px;margin:10px 0;background:#f8fafc;border-radius:0 8px 8px 0}
+.concept h4{font-size:13px;font-weight:700;margin-bottom:2px}
+.concept p{font-size:12px;color:#374151;margin-bottom:0;line-height:1.6}
+
+/* Glossary */
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+.gloss-item{font-size:12px;padding:6px 0;border-bottom:1px solid #f1f5f9}
+.gloss-item strong{color:var(--dark)}
+.gloss-item span{color:var(--gray)}
+
+/* Workflow steps */
+.workflow{counter-reset:wf}
+.wf-step{display:flex;gap:14px;margin:12px 0;align-items:flex-start}
+.wf-step::before{counter-increment:wf;content:counter(wf);background:var(--blue);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.wf-step div h4{font-size:13px;font-weight:700;margin-bottom:2px}
+.wf-step div p{font-size:12px;color:var(--gray);line-height:1.5;margin:0}
+
+/* Toggle explainer */
+.toggle-demo{display:flex;gap:8px;margin:10px 0;justify-content:center}
+.demo-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;border:2px solid var(--border);background:#fff;color:var(--gray)}
+.demo-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* Two-column concept */
+.two-concepts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Callout */
+.callout{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6}
+.callout strong{color:#92400e}
+
+.tip{background:#ecfdf5;border:1px solid #059669;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6}
+.tip strong{color:#065f46}
+
+@media(max-width:700px){
+  .page-map,.glossary,.two-concepts{grid-template-columns:1fr}
+  .topnav{flex-wrap:wrap;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="logo">BLI Negotiations</span>
+  <a href="https://bli-dashboard.vercel.app/dashboard.html">Ops Dashboard</a>
+  <a href="guide.html" class="active">Guide</a>
+  <a href="index.html">MESO Overview</a>
+  <a href="performance.html">C8882435 Performance</a>
+  <a href="analyzer.html">C8892307 Analyzer</a>
+  <a href="cheatsheet.html">Cheat Sheet</a>
+</nav>
+
+<div class="hero">
+  <h1>How to Use These Tools</h1>
+  <div class="sub">Everything you need to understand and navigate the BLI contract negotiation dashboards. Start here if it's your first time.</div>
+</div>
+
+<div class="container">
+
+<!-- SECTION 1: Big Picture -->
+<div class="section" id="s1">
+  <h2 onclick="toggle('s1')">What Is All This? <span class="badge" style="background:#dbeafe;color:#1e40af">Start Here</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <p>Better Logistics Inc (BLI) is a FedEx Ground ISP (Independent Service Provider). BLI gets paid by FedEx to deliver packages under a contract that defines the rates per stop, per package, per week, etc.</p>
+    <p>Contracts don't last forever — they expire and get renegotiated. <strong>These tools exist to help you make the best decision on your next contract</strong> by comparing the options FedEx has offered using your actual operating data, not just FedEx's estimates.</p>
+
+    <div class="callout">
+      <strong>Two separate negotiations are covered here:</strong><br>
+      <strong>1. OLD negotiation</strong> — Neg Req 1000046034, which resulted in your current contract C8882435 (Feb 2025 – Jun 2026). This is already signed. The Performance page shows how that negotiation worked out.<br>
+      <strong>2. NEW negotiation</strong> — Neg Req 1000054561, for new contract C8892307 (Jun 2026 – Aug 2028). This is the one you need to decide on. <strong>Deadline: March 24, 2026.</strong>
+    </div>
+
+    <p>FedEx doesn't offer a single "take it or leave it" contract. Instead, they give you <strong>3 different options called MESOs</strong> (Multiple Equivalent Simultaneous Offers). Each MESO has different rate structures — some pay more per stop but less in fixed weekly charges, and vice versa. Your job is to figure out which one pays you the most given your actual workload.</p>
+  </div>
+</div>
+
+<!-- SECTION 2: Page Map -->
+<div class="section" id="s2">
+  <h2 onclick="toggle('s2')">Which Page Do I Use? <span class="badge" style="background:#d1fae5;color:#065f46">Page Guide</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <p>There are 5 pages plus this guide. Each one answers a different question. Here's the map:</p>
+
+    <div class="page-map">
+      <a href="index.html" class="page-card">
+        <div class="step">Background</div>
+        <h3>MESO Overview</h3>
+        <div class="page-desc">Side-by-side comparison of the 3 MESO offers for the OLD negotiation (C8882435). Shows rate differences, revenue projections, and which MESO was best.</div>
+        <div class="page-answers">Answers: "What options did FedEx offer last time?"</div>
+      </a>
+
+      <a href="performance.html" class="page-card">
+        <div class="step">Learn from History</div>
+        <h3>C8882435 Performance</h3>
+        <div class="page-desc">Shows how the current contract has actually performed — what you negotiated vs what the original MESOs would have paid. Proves the value of negotiating well.</div>
+        <div class="page-answers">Answers: "Was my last negotiation worth it?"</div>
+      </a>
+
+      <a href="analyzer.html" class="page-card highlight">
+        <div class="step">Make Your Decision</div>
+        <h3>C8892307 Analyzer</h3>
+        <div class="page-desc">The main event. Compare all 3 new MESOs using FedEx's projected volume AND your actual trailing volume. Adjust rates, find break-even points, see total contract impact.</div>
+        <div class="page-answers">Answers: "Which new MESO should I pick? What should I counter-offer?"</div>
+      </a>
+
+      <a href="cheatsheet.html" class="page-card">
+        <div class="step">Take to the Table</div>
+        <h3>Print Cheat Sheet</h3>
+        <div class="page-desc">A one-page printable summary of the key numbers, your recommendation, and counter-offer talking points. Designed to bring to the actual negotiation meeting.</div>
+        <div class="page-answers">Answers: "What do I say when I sit down with FedEx?"</div>
+      </a>
+    </div>
+
+    <div class="tip">
+      <strong>Also available:</strong> The <a href="https://bli-dashboard.vercel.app/dashboard.html" style="color:#065f46">Operations Dashboard</a> shows your day-to-day operational metrics (revenue, drivers, routes, packages) from the last 48 weeks of charge statements. That's your "how is the business doing" view — separate from the contract negotiation tools.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: Recommended Workflow -->
+<div class="section" id="s3">
+  <h2 onclick="toggle('s3')">Recommended Workflow <span class="badge" style="background:#fef3c7;color:#92400e">Step by Step</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <p>If you're starting from scratch, follow this order:</p>
+
+    <div class="workflow">
+      <div class="wf-step">
+        <div>
+          <h4>Check Your Performance History</h4>
+          <p>Open <a href="performance.html" style="color:var(--blue)">C8882435 Performance</a>. This shows what your current contract has earned vs what the original MESOs would have paid. It gives you context for how much a good negotiation is worth.</p>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div>
+          <h4>Compare New MESO Offers</h4>
+          <p>Open the <a href="analyzer.html" style="color:var(--blue)">C8892307 Analyzer</a>. Start in <strong>52-Week Annualized View</strong> (the default) so the numbers are easy to compare to your current annual revenue. Look at Section 1 first — does FedEx's volume estimate match your reality?</p>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div>
+          <h4>Switch Volume Modes</h4>
+          <p>In the Revenue Calculator (Section 2), toggle between "FedEx Projected Volume" and "My Actual Volume." If there's a big gap, that tells you FedEx is over/under-estimating your workload — which directly affects which MESO is best for you.</p>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div>
+          <h4>Play With the Sliders</h4>
+          <p>Section 3 lets you start from any MESO and adjust individual rates up or down. This is your counter-offer builder. "What if I get MESO 2 but push the stop rate to $2.60?" — you'll see the exact dollar impact instantly.</p>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div>
+          <h4>Check Your Safety Margin</h4>
+          <p>Section 4 (Break-Even) answers the worry: "What if my volume drops?" It shows exactly how much volume can fall before each MESO earns less than your current contract. Higher percentage = safer choice.</p>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div>
+          <h4>Print and Prepare</h4>
+          <p>Once you've decided, open the <a href="cheatsheet.html" style="color:var(--blue)">Cheat Sheet</a> and print it. It condenses everything into a one-page reference to bring to the negotiation table.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: Understanding the Analyzer -->
+<div class="section" id="s4">
+  <h2 onclick="toggle('s4')">Understanding the Analyzer Sections <span class="badge" style="background:#ede9fe;color:#5b21b6">Deep Dive</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <p>The <a href="analyzer.html" style="color:var(--blue)">C8892307 Analyzer</a> has 6 sections. Here's what each one does and why it matters:</p>
+
+    <div class="concept">
+      <h4>Section 1: Volume Transparency</h4>
+      <p>Compares FedEx's estimated volume (what they think you'll deliver) vs your actual trailing volume (what you've really been doing for 48 weeks). This matters because MESO revenue depends heavily on volume — if FedEx underestimates your stops, the MESO that looks best on paper might not be best in reality.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Section 2: Revenue Calculator</h4>
+      <p>Shows the total revenue each MESO would generate and how it compares to your current contract. You can toggle between three volume scenarios: FedEx's projection, your 48-week average, and your recent 12-week trend. This catches seasonal shifts — maybe your recent volume is higher or lower than your long-term average.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Section 3: Rate Impact Sliders</h4>
+      <p>Your counter-offer workshop. Pick a MESO as your starting point, then drag any rate up or down. The right side instantly shows the total revenue and how it compares to all 3 MESOs. Use this to answer questions like: "If I can get them to raise the stop charge by $0.10, is that worth more than a $500/wk higher service charge?"</p>
+    </div>
+
+    <div class="concept">
+      <h4>Section 4: Break-Even Analysis</h4>
+      <p>The safety check. For each MESO, it calculates how far your volume would need to drop before that MESO earns less than your current contract. A MESO with 20% break-even means even if you lose 20% of your volume, you're still earning more than today. Higher-fixed-cost MESOs (like MESO 1) tend to have better break-even because the fixed service charge protects you when volume dips.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Section 5: Contract Period Impact</h4>
+      <p>Goes rate-by-rate and shows the total dollar difference vs your current contract. A $0.04 stop rate increase doesn't sound like much — but multiplied by 2,181 stops/week for 52 weeks, that's $4,537/year. This section does that math for every rate component so you can see which ones actually move the needle.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Section 6: Full Rate Table</h4>
+      <p>The raw numbers. Every rate for every MESO across all 3 years (Year 1, Year 2, Year 3). Year 2/3 rates sometimes escalate — this table highlights those changes in amber so you don't miss them. Always check Year 2+ rates before making a decision based only on Year 1.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: 52-week vs 113-week -->
+<div class="section" id="s5">
+  <h2 onclick="toggle('s5')">52-Week vs 113-Week View <span class="badge" style="background:#fce7f3;color:#9d174d">Important</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <p>The analyzer has a toggle at the top that switches between two views:</p>
+
+    <div class="toggle-demo">
+      <span class="demo-btn on">52-Week Annualized View</span>
+      <span class="demo-btn">Full 113-Week Contract</span>
+    </div>
+
+    <div class="two-concepts">
+      <div class="concept" style="border-color:var(--blue)">
+        <h4>52-Week Annualized</h4>
+        <p>Shows what you'd earn in <strong>one year</strong> using Year 1 rates only. Easier to compare against your current annual revenue. This is the default view and the one most people should use for decision-making.</p>
+      </div>
+      <div class="concept" style="border-color:var(--m3)">
+        <h4>Full 113-Week Contract</h4>
+        <p>Shows the <strong>total value over the entire contract</strong> — Year 1 (52 wks) + Year 2 (52 wks) + Year 3 (9 wks). Includes rate escalation in Years 2-3. Use this when you want to see the full financial picture including how rates change over time.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>When does the view matter?</strong> For most decisions, the 52-week view is all you need. Switch to 113-week when you want to factor in Year 2/3 rate escalation — for example, MESO 1's service charge jumps from $10,919/wk in Year 1 to $11,535/wk in Year 2. That $616/wk increase over 61 weeks is an extra $37,576 that only shows up in the 113-week view.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: Key Concepts -->
+<div class="section" id="s6">
+  <h2 onclick="toggle('s6')">Key Concepts <span class="badge" style="background:#dbeafe;color:#1e40af">Terminology</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <div class="concept">
+      <h4>What is a MESO?</h4>
+      <p><strong>Multiple Equivalent Simultaneous Offers.</strong> FedEx presents 3 contract options at once. They're designed to be roughly equivalent in total value but structured differently — one might pay more per stop but less in fixed charges, another might be the opposite. Your actual workload determines which one is actually best for you.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Fixed vs Variable Revenue</h4>
+      <p><strong>Fixed</strong> charges (service charge, apparel, vehicle brand) are the same every week regardless of volume. <strong>Variable</strong> charges (stop, package, fuel, e-com) go up or down based on how many packages you deliver. A high-fixed MESO protects you if volume drops. A high-variable MESO rewards you if volume grows. Your current volume trend tells you which matters more.</p>
+    </div>
+
+    <div class="concept">
+      <h4>FedEx Volume vs Your Actual Volume</h4>
+      <p>When FedEx builds the MESO offers, they use their own volume projections. But their estimates might be wrong — maybe they're projecting fewer e-commerce stops than you actually handle. Since variable revenue depends on volume, using the wrong volume gives you the wrong answer about which MESO is best. That's why every analysis here lets you switch between FedEx's numbers and your real data.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Rate Escalation (Year 2/3)</h4>
+      <p>MESO rates aren't flat for the whole contract. Some components increase in Year 2 and Year 3. For example, service charges often go up while per-stop rates stay flat. Always check the Full Rate Table to see which rates change — a MESO that looks great in Year 1 might be even better (or slightly worse) when escalation kicks in.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Advance CSC (Cash Sign-on)</h4>
+      <p>Some MESOs include a one-time advance payment (like $16,000) paid when you sign. This is "free money" upfront but it's built into the deal — you're not getting it for nothing. The analyzer includes it in total revenue calculations so you can see the full picture.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Break-Even Point</h4>
+      <p>The percentage your volume can drop before a new MESO starts paying less than your current contract. Think of it as your safety margin. If a MESO has a 25% break-even, you'd need to lose a quarter of your business before it becomes a bad deal. Higher = safer.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7: Glossary -->
+<div class="section" id="s7">
+  <h2 onclick="toggle('s7')">Rate Glossary <span class="badge" style="background:#f1f5f9;color:var(--gray)">Quick Reference</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <p>Every rate component in your FedEx contract, explained in plain English:</p>
+    <div class="glossary">
+      <div class="gloss-item"><strong>Service Charge</strong> <span>— Fixed weekly payment. Your "base salary" from FedEx regardless of volume.</span></div>
+      <div class="gloss-item"><strong>Stop Charge</strong> <span>— Paid per non-e-commerce delivery stop. More residential/business stops = more revenue.</span></div>
+      <div class="gloss-item"><strong>Fuel Surcharge</strong> <span>— Per-stop supplement for fuel costs. Applied to ALL stops (non-e-com + e-com).</span></div>
+      <div class="gloss-item"><strong>Package Charge</strong> <span>— Paid per non-e-commerce package. Multi-package stops earn more than single-package stops.</span></div>
+      <div class="gloss-item"><strong>LP Mix Charge</strong> <span>— "Large Package" supplement. Paid per package that qualifies as oversized/heavy. Higher LP % = more revenue.</span></div>
+      <div class="gloss-item"><strong>E-Com Stop Charge</strong> <span>— Per-stop payment for e-commerce (SmartPost/SurePost) deliveries. Usually lower rate than regular stops.</span></div>
+      <div class="gloss-item"><strong>E-Com Package Charge</strong> <span>— Per-package payment for e-commerce deliveries. Separate from the stop charge.</span></div>
+      <div class="gloss-item"><strong>Apparel Charge</strong> <span>— Fixed weekly payment for driver uniform/appearance compliance.</span></div>
+      <div class="gloss-item"><strong>Vehicle Brand Charge</strong> <span>— Per-vehicle weekly payment for maintaining FedEx-branded vehicles.</span></div>
+      <div class="gloss-item"><strong>Surge Stop</strong> <span>— Higher per-stop rate that kicks in during peak volume periods (holidays, etc.).</span></div>
+      <div class="gloss-item"><strong>Early Pull</strong> <span>— Per-event payment when FedEx requests early departure from the terminal.</span></div>
+      <div class="gloss-item"><strong>Liquidated Damages</strong> <span>— Per-package penalty FedEx can charge for service failures. Lower = better for you.</span></div>
+      <div class="gloss-item"><strong>Advance CSC</strong> <span>— One-time upfront cash payment included in some MESOs. Only paid in Year 1.</span></div>
+      <div class="gloss-item"><strong>Vehicles</strong> <span>— Number of branded vehicles in the contract. Affects vehicle brand charge total (rate × count).</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: Tips -->
+<div class="section" id="s8">
+  <h2 onclick="toggle('s8')">Negotiation Tips <span class="badge" style="background:#ecfdf5;color:#065f46">Strategy</span> <span class="chevron">&#9660;</span></h2>
+  <div class="section-body">
+    <div class="tip">
+      <strong>Compare apples to apples.</strong> Always use the same volume assumption when comparing MESOs. Toggle all cards to "My Actual Volume" — FedEx's projection is designed to make their offers look balanced, not to show you which one is actually best for your operation.
+    </div>
+
+    <div class="tip">
+      <strong>Don't just look at total revenue.</strong> Two MESOs might produce similar totals but one might be 70% variable (risky if volume drops) while the other is 50% fixed (more stable). Check the break-even analysis to understand your downside.
+    </div>
+
+    <div class="tip">
+      <strong>Use the sliders to build your counter.</strong> Start from the best MESO and push specific rates higher. "I like MESO 2's structure but need the stop rate at $2.60 instead of $2.50" — the slider shows you that's worth an extra $5,700/year. That's your negotiation ammunition.
+    </div>
+
+    <div class="tip">
+      <strong>Check the Year 2/3 escalation.</strong> The Full Rate Table (Section 6 of the Analyzer) shows exactly which rates change. A MESO that's #2 in Year 1 might become #1 when Year 2 rates kick in. Use the 113-week view to capture this.
+    </div>
+
+    <div class="tip">
+      <strong>The advance is a one-time sweetener.</strong> $16,000 sounds great, but spread over 113 weeks it's only $142/week. Don't let it distract from the rates you'll live with for 2+ years. Check total revenue both with and without the advance.
+    </div>
+
+    <div class="callout">
+      <strong>Remember:</strong> You've done this before. The <a href="performance.html" style="color:#92400e">C8882435 Performance page</a> shows what your last negotiation was worth. Use that confidence going in — the data says negotiating works.
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggle(id){
+  document.getElementById(id).classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
