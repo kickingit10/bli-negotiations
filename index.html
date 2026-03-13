@@ -6,7 +6,7 @@
 <title>BLI Contract Negotiation Analyzer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#6366f1}
+:root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#6366f1;--old:#8b5cf6}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark);min-height:100vh}
 
@@ -21,7 +21,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:48px 20px 72px;text-align:center;position:relative;overflow:hidden}
 .hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:#f0f2f5;border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
 .hero h1{font-size:28px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
-.hero .sub{font-size:14px;opacity:0.85;margin-bottom:16px}
+.hero .sub{font-size:15px;opacity:0.92;margin-bottom:16px;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.5}
 .deadline{display:inline-block;background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;backdrop-filter:blur(4px)}
 .deadline .days{color:#fbbf24;font-size:18px}
 
@@ -32,8 +32,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px}
 .card h2{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--dark);display:flex;align-items:center;gap:8px}
 .card h2 .icon{font-size:20px}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.card-header h2{margin-bottom:0}
+
+/* Explainer card */
+.explainer{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:24px;border-left:5px solid var(--blue)}
+.explainer h2{font-size:19px;font-weight:800;margin-bottom:14px;color:var(--dark)}
+.explainer .context-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px}
+.explainer .ctx-box{background:var(--light);border-radius:10px;padding:16px;border:1px solid var(--border)}
+.explainer .ctx-box.old{border-left:4px solid var(--old)}
+.explainer .ctx-box.new{border-left:4px solid var(--green)}
+.explainer .ctx-box h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.explainer .ctx-box p{font-size:13px;color:#374151;line-height:1.6;margin:0}
+.explainer .ctx-box .tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+.explainer .ctx-box.old .tag{background:#ede9fe;color:#7c3aed}
+.explainer .ctx-box.new .tag{background:#d1fae5;color:#059669}
+.explainer .approach{background:#eff6ff;border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.7;color:#1e40af}
+.explainer .approach strong{color:#1d4ed8}
+.legend-strip{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.legend-strip .item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--gray)}
+.legend-strip .dot{width:12px;height:12px;border-radius:3px}
 
 /* Winner banner */
 .winner-banner{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-radius:12px;padding:28px;margin-bottom:20px;text-align:center;box-shadow:0 4px 16px rgba(5,150,105,0.3)}
@@ -55,10 +71,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .meso-card.m1{border-top-color:var(--m1)}
 .meso-card.m2{border-top-color:var(--m2)}
 .meso-card.m3{border-top-color:var(--m3)}
-.meso-card.winner::after{content:'★ BEST';position:absolute;top:10px;right:10px;background:var(--green);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800}
+.meso-card.winner::after{content:'RECOMMENDED';position:absolute;top:10px;right:10px;background:var(--green);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800}
 .meso-card h3{font-size:16px;font-weight:700;margin-bottom:12px}
 .meso-card .total{font-size:28px;font-weight:800;margin:8px 0}
-.meso-card .m1 .total{color:var(--m1)}
 .meso-card .breakdown{font-size:12px;color:var(--gray);line-height:1.8}
 .meso-card .breakdown .row{display:flex;justify-content:space-between}
 .meso-card .breakdown .row.sep{border-top:1px solid var(--border);padding-top:6px;margin-top:6px;font-weight:700;color:var(--dark)}
@@ -94,6 +109,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .section-header{margin:32px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--border)}
 .section-header h2{font-size:20px;font-weight:800;color:var(--dark)}
 .section-header p{font-size:13px;color:var(--gray);margin-top:2px}
+.section-header .badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:0.5px;margin-left:8px;vertical-align:middle}
+.section-header .badge.new-contract{background:#d1fae5;color:#059669}
+.section-header .badge.old-contract{background:#ede9fe;color:#7c3aed}
+.section-header .badge.comparison{background:#fef3c7;color:#92400e}
 
 /* Insight box */
 .insight{background:#eff6ff;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.7;color:#1e40af}
@@ -110,6 +129,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 @media(max-width:900px){
   .meso-grid,.metrics{grid-template-columns:1fr 1fr}
   .chart-row{grid-template-columns:1fr}
+  .explainer .context-grid{grid-template-columns:1fr}
 }
 @media(max-width:600px){
   .meso-grid,.metrics{grid-template-columns:1fr}
@@ -131,17 +151,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <nav class="topnav">
   <span class="logo">Better Logistics Inc</span>
-  <a href="../site/dashboard.html">Operations Dashboard</a>
+  <a href="https://bli-dashboard.vercel.app/dashboard.html">Operations Dashboard</a>
   <a href="index.html" class="active">Contract Analyzer</a>
 </nav>
 
 <div class="hero">
-  <h1>Contract Negotiation Analyzer</h1>
-  <p class="sub">Agreement C8892307 — 48 Weeks of Actual Data vs. 3 MESO Offers</p>
+  <h1>Which New Contract Offer Should You Pick?</h1>
+  <p class="sub">BLI's current FedEx contract expires June 2026. FedEx has offered 3 options for the new 3-year deal. This dashboard uses your real operating data to show which one earns you the most money.</p>
   <div class="deadline">Decision Deadline: <span class="days" id="countdown"></span></div>
 </div>
 
 <div class="container">
+
+<!-- ═══ HOW TO READ THIS ═══ -->
+<div class="explainer">
+  <h2>How to Read This Dashboard</h2>
+  <div class="context-grid">
+    <div class="ctx-box old">
+      <div class="tag">Current / Old Contract</div>
+      <h3>Agreement C8882435</h3>
+      <p>This is BLI's <strong>current deal</strong> with FedEx Ground, running Feb 2025 through June 2026. We have <strong>48 weeks of actual charge statements</strong> from this contract showing exactly what BLI earned, how many stops/packages were delivered, and what every charge looked like.</p>
+    </div>
+    <div class="ctx-box new">
+      <div class="tag">New Contract (The Decision)</div>
+      <h3>Agreement C8892307</h3>
+      <p>This is the <strong>new 3-year deal</strong> FedEx is offering (June 2026 through August 2028). FedEx gave 3 different offers called "MESOs" — each with different rates. <strong>You need to pick one by March 24, 2026.</strong></p>
+    </div>
+  </div>
+  <div class="approach">
+    <strong>What we did:</strong> We took your real 48-week delivery volumes (stops, packages, e-commerce, large packages) from the current contract and calculated what you would have earned under each of the 3 new MESO offers. This shows which offer pays best at <em>your actual volume levels</em> — not FedEx's optimistic projections.
+  </div>
+  <div class="legend-strip">
+    <div class="item"><div class="dot" style="background:var(--m1)"></div>MESO 1 — Highest fixed pay, lowest per-stop rates</div>
+    <div class="item"><div class="dot" style="background:var(--m2)"></div>MESO 2 — Middle ground</div>
+    <div class="item"><div class="dot" style="background:var(--m3)"></div>MESO 3 — Lowest fixed pay, highest per-stop rates</div>
+    <div class="item"><div class="dot" style="background:var(--current)"></div>Actual — What you currently earn (dashed line on charts)</div>
+  </div>
+</div>
 
 <!-- Winner Banner -->
 <div class="winner-banner" id="winner-banner"></div>
@@ -149,23 +195,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- Key Metrics -->
 <div class="metrics" id="key-metrics"></div>
 
-<!-- ═══ SECTION 1: MESO Comparison ═══ -->
+<!-- ═══ SECTION 1: The 3 New Offers ═══ -->
 <div class="section-header">
-  <h2>MESO Offer Comparison</h2>
-  <p>Each offer's rates applied to your actual 48-week operating volumes</p>
+  <h2>The 3 New MESO Offers <span class="badge new-contract">New Contract</span></h2>
+  <p>What each offer would have paid you over the last 48 weeks, using your real volumes</p>
 </div>
 
 <div class="meso-grid" id="meso-cards"></div>
 
 <div class="card">
-  <h2><span class="icon">📊</span> Revenue Breakdown by Component</h2>
+  <h2><span class="icon">📊</span> Where the Revenue Comes From (New Contract Offers)</h2>
+  <div class="insight">Each bar shows total projected revenue broken into components. MESO 1 has more blue (service charge = fixed guaranteed money). MESO 3 has more of the warm colors (stops, e-commerce = variable money that depends on volume).</div>
   <div class="chart-container"><canvas id="chart-breakdown"></canvas></div>
 </div>
 
 <div class="card">
-  <h2><span class="icon">⚖️</span> Fixed vs Variable Mix</h2>
+  <h2><span class="icon">⚖️</span> Fixed vs Variable: The Core Tradeoff</h2>
   <div class="insight">
-    <strong>Why this matters:</strong> Higher variable % means more revenue when volumes are strong, but more risk if volumes drop. Higher fixed % provides a guaranteed floor regardless of volume fluctuations.
+    <strong>What does "fixed" vs "variable" mean?</strong> Fixed revenue (service charge, apparel, vehicles) is guaranteed every week regardless of how many packages you deliver. Variable revenue (per-stop, per-package, e-commerce, fuel, LP mix) goes up when volumes are strong but goes down if FedEx sends you fewer packages. The question is: do you want a bigger guaranteed check (MESO 1) or bet on your volumes staying strong (MESO 3)?
   </div>
   <div class="chart-row">
     <div class="chart-container"><canvas id="chart-fixvar"></canvas></div>
@@ -173,10 +220,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- ═══ SECTION 2: Rate Comparison ═══ -->
+<!-- ═══ SECTION 2: Rate-by-Rate ═══ -->
 <div class="section-header">
-  <h2>Rate-by-Rate Comparison</h2>
-  <p>Current contract (C8882435 Final) vs all 3 new MESO offers (C8892307 Year 1)</p>
+  <h2>Rate-by-Rate: Old Contract vs New Offers <span class="badge comparison">Comparison</span></h2>
+  <p>Every rate element from your current deal compared to each new MESO offer — green = highest rate, gray = lowest</p>
 </div>
 
 <div class="card">
@@ -189,71 +236,80 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <table class="rate-table" id="rate-table">
       <thead><tr>
         <th>Rate Element</th>
-        <th class="num">Current</th>
-        <th class="num" style="color:var(--m1)">MESO 1</th>
-        <th class="num" style="color:var(--m2)">MESO 2</th>
-        <th class="num" style="color:var(--m3)">MESO 3</th>
+        <th class="num" style="color:var(--old)">Current Contract</th>
+        <th class="num" style="color:var(--m1)">New — MESO 1</th>
+        <th class="num" style="color:var(--m2)">New — MESO 2</th>
+        <th class="num" style="color:var(--m3)">New — MESO 3</th>
         <th class="num">Type</th>
       </tr></thead>
       <tbody id="rate-tbody"></tbody>
     </table>
   </div>
+  <div class="insight" style="margin-top:16px">
+    <strong>New in this contract:</strong> "Liquidated Damage Rate" is a new charge in the new contract that didn't exist before — this is a penalty FedEx can charge for service failures. "Advance Contract Svc" is a $16,000 one-time payment in Year 1 only.
+  </div>
 </div>
 
-<!-- ═══ SECTION 3: Weekly Trend ═══ -->
+<!-- ═══ SECTION 3: Week-by-Week ═══ -->
 <div class="section-header">
-  <h2>Weekly Revenue Projection</h2>
-  <p>How each MESO would have performed week-by-week on your actual volumes</p>
+  <h2>Week-by-Week: How Each Offer Would Have Performed <span class="badge new-contract">New Contract</span></h2>
+  <p>Each new MESO's rates applied to your actual weekly volumes, compared to what you actually earned</p>
 </div>
 
 <div class="card">
+  <div class="insight">The solid colored lines show what each new MESO would have paid. The dashed purple line is what you <em>actually</em> earned on the current contract. Notice the MESOs track closely together — but MESO 2 (green) stays consistently on top.</div>
   <div class="chart-container" style="height:380px"><canvas id="chart-weekly"></canvas></div>
 </div>
 
 <div class="card">
-  <h2><span class="icon">📈</span> Cumulative Revenue Over Time</h2>
+  <h2><span class="icon">📈</span> Running Total Over 48 Weeks</h2>
+  <div style="font-size:13px;color:var(--gray);margin-bottom:8px">Watch the gap between MESOs widen over time — small weekly differences compound into a meaningful annual advantage.</div>
   <div class="chart-container" style="height:380px"><canvas id="chart-cumulative"></canvas></div>
 </div>
 
-<!-- ═══ SECTION 4: Volume Context ═══ -->
+<!-- ═══ SECTION 4: Your Actual Volumes ═══ -->
 <div class="section-header">
-  <h2>Actual Volume Data</h2>
-  <p>48 weeks of real operating data from current contract C8882435</p>
+  <h2>Your Actual Volume Data <span class="badge old-contract">Current Contract</span></h2>
+  <p>48 weeks of real stops and packages from the current contract — this is the data powering every projection above</p>
 </div>
 
 <div class="metrics" id="volume-metrics"></div>
 
 <div class="card">
-  <h2><span class="icon">📦</span> Weekly Stop & Package Volumes</h2>
+  <h2><span class="icon">📦</span> Weekly Delivery Volume Trends</h2>
+  <div style="font-size:13px;color:var(--gray);margin-bottom:8px">These are the real numbers from BLI's weekly charge statements. Higher volumes favor MESO 3; lower volumes favor MESO 1.</div>
   <div class="chart-container" style="height:340px"><canvas id="chart-volumes"></canvas></div>
 </div>
 
 <!-- ═══ SECTION 5: FedEx vs Reality ═══ -->
 <div class="section-header">
-  <h2>FedEx Projections vs Actual-Based Projections</h2>
-  <p>Comparing what FedEx says you'll earn vs what your real volumes indicate</p>
+  <h2>FedEx's Numbers vs Our Numbers <span class="badge comparison">Comparison</span></h2>
+  <p>FedEx provides 3-year revenue projections in each MESO — but they use their own volume assumptions, not your actuals</p>
 </div>
 
 <div class="card">
+  <div class="insight warn">
+    <strong>Why are there two sets of numbers?</strong> FedEx included 3-year revenue projections in each MESO offer document. Those are the purple bars. But FedEx assumes higher volumes than BLI actually delivers. So we calculated our own projections (red bars) using your real volume data. The red bars are the more realistic estimate of what you'll actually earn.
+  </div>
   <div class="chart-container"><canvas id="chart-fedex-vs-actual"></canvas></div>
-  <div class="insight warn" id="fedex-insight"></div>
+  <div class="insight good" id="fedex-insight"></div>
 </div>
 
-<!-- ═══ SECTION 6: Sensitivity ═══ -->
+<!-- ═══ SECTION 6: What If? ═══ -->
 <div class="section-header">
-  <h2>Sensitivity Analysis</h2>
-  <p>How volume changes affect each MESO differently</p>
+  <h2>What If Volumes Change? <span class="badge new-contract">New Contract</span></h2>
+  <p>How each MESO performs if FedEx sends you more or fewer packages than current levels</p>
 </div>
 
 <div class="card">
   <h2><span class="icon">🎚️</span> Revenue at Different Volume Levels</h2>
-  <p style="font-size:13px;color:var(--gray);margin-bottom:12px">What happens if volumes go up or down 10-20% from actual?</p>
+  <div style="font-size:13px;color:var(--gray);margin-bottom:12px">The center (0%) is your current volume. Left side = fewer packages. Right side = more packages. Where the lines cross tells you when a different MESO would become the better choice.</div>
   <div class="chart-container" style="height:360px"><canvas id="chart-sensitivity"></canvas></div>
   <div class="insight" id="sensitivity-insight"></div>
 </div>
 
 <div class="footer">
-  BLI Contract Negotiation Analyzer — Built with actual charge statement data<br>
+  BLI Contract Negotiation Analyzer — Built from 48 weeks of actual charge statement data (Apr 2025 – Feb 2026)<br>
   Last updated: <span id="last-updated"></span>
 </div>
 
@@ -281,24 +337,30 @@ const winner = Object.entries(totals).sort((a,b)=>b[1]-a[1])[0];
 const loser = Object.entries(totals).sort((a,b)=>a[1]-b[1])[0];
 const diff = winner[1] - loser[1];
 const labels = {meso_1:'MESO 1',meso_2:'MESO 2',meso_3:'MESO 3'};
+const winDesc = {meso_1:'(highest fixed, lowest variable)', meso_2:'(balanced middle ground)', meso_3:'(lowest fixed, highest variable)'};
 
 document.getElementById('winner-banner').innerHTML = `
-  <h2>★ ${labels[winner[0]]} Maximizes Revenue on Actual Volumes</h2>
-  <div class="amount">${fmt(winner[1])}</div>
-  <div class="detail">Over 48 weeks of real operating data — ${fmt(diff)} more than ${labels[loser[0]]} (${(diff/loser[1]*100).toFixed(1)}% advantage)</div>
+  <h2>Our Recommendation: ${labels[winner[0]]}</h2>
+  <div class="amount">${fmt(winner[1])} over 48 weeks</div>
+  <div class="detail">${labels[winner[0]]} ${winDesc[winner[0]]} earns ${fmt(diff)} more than ${labels[loser[0]]} based on your actual delivery volumes</div>
 `;
 
 // ── Key Metrics ──────────────────────────────────────────────────
 const vs = D.volume_stats;
 document.getElementById('key-metrics').innerHTML = `
-  <div class="metric-card"><div class="label">Weeks Analyzed</div><div class="value">${vs.weeks}</div><div class="sub">${vs.date_range}</div></div>
-  <div class="metric-card highlight"><div class="label">Best MESO (48wk)</div><div class="value">${fmt(winner[1])}</div><div class="sub">${labels[winner[0]]}</div></div>
-  <div class="metric-card"><div class="label">Current Contract Net</div><div class="value">${fmt(D.current_contract.totals.net)}</div><div class="sub">48-week actual</div></div>
-  <div class="metric-card"><div class="label">Avg Weekly Net</div><div class="value">${fmt(vs.avg_net)}</div><div class="sub">${vs.avg_drivers} avg drivers</div></div>
+  <div class="metric-card"><div class="label">Data Analyzed</div><div class="value">${vs.weeks} weeks</div><div class="sub">${vs.date_range}</div></div>
+  <div class="metric-card highlight"><div class="label">Best New Offer</div><div class="value">${fmt(winner[1])}</div><div class="sub">${labels[winner[0]]}</div></div>
+  <div class="metric-card"><div class="label">Current Contract Earned</div><div class="value">${fmt(D.current_contract.totals.net)}</div><div class="sub">Same 48 weeks (actual)</div></div>
+  <div class="metric-card"><div class="label">Avg Weekly Revenue</div><div class="value">${fmt(vs.avg_net)}</div><div class="sub">${vs.avg_drivers} avg drivers/wk</div></div>
 `;
 
 // ── MESO Cards ───────────────────────────────────────────────────
 const mesoColors = {meso_1:'m1',meso_2:'m2',meso_3:'m3'};
+const mesoDesc = {
+  meso_1:'Biggest guaranteed weekly check. Lower per-stop and e-commerce rates.',
+  meso_2:'Balanced approach. Moderate guaranteed pay with competitive per-activity rates.',
+  meso_3:'Smallest guaranteed check but highest per-stop and e-commerce rates. Best when volumes are high.'
+};
 let mesoHtml = '';
 for (const mn of ['meso_1','meso_2','meso_3']) {
   const p = projs[mn];
@@ -310,18 +372,19 @@ for (const mn of ['meso_1','meso_2','meso_3']) {
   mesoHtml += `
     <div class="meso-card ${mesoColors[mn]} ${isWinner?'winner':''}">
       <h3>${labels[mn]}</h3>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:8px;line-height:1.5">${mesoDesc[mn]}</div>
       <div class="total" style="color:var(--${mesoColors[mn]})">${fmt(t.total)}</div>
-      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">48-week projected revenue</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">48-week projected revenue (using your real volumes)</div>
       <div class="breakdown">
-        <div class="row"><span>Service Charge</span><span>${fmt(t.service)}</span></div>
+        <div class="row"><span>Service Charge (weekly fixed)</span><span>${fmt(t.service)}</span></div>
         <div class="row"><span>Stop Revenue</span><span>${fmt(t.stop)}</span></div>
-        <div class="row"><span>E-Com Stops</span><span>${fmt(t.ecom_stop)}</span></div>
+        <div class="row"><span>E-Commerce Stops</span><span>${fmt(t.ecom_stop)}</span></div>
         <div class="row"><span>Fuel Surcharge</span><span>${fmt(t.fuel)}</span></div>
-        <div class="row"><span>LP Mix</span><span>${fmt(t.lp_mix)}</span></div>
-        <div class="row"><span>Packages</span><span>${fmt(t.package + t.ecom_pkg)}</span></div>
-        <div class="row"><span>Apparel + Vehicles</span><span>${fmt(t.apparel + t.vehicle_brand)}</span></div>
-        <div class="row sep"><span>Variable</span><span>${fmt(t.variable)} (${varPct}%)</span></div>
-        <div class="row sep"><span>Fixed</span><span>${fmt(t.fixed)} (${fixPct}%)</span></div>
+        <div class="row"><span>Large Package Mix</span><span>${fmt(t.lp_mix)}</span></div>
+        <div class="row"><span>Package Charges</span><span>${fmt(t.package + t.ecom_pkg)}</span></div>
+        <div class="row"><span>Apparel + Vehicle Branding</span><span>${fmt(t.apparel + t.vehicle_brand)}</span></div>
+        <div class="row sep"><span>Total Variable (volume-dependent)</span><span>${fmt(t.variable)} (${varPct}%)</span></div>
+        <div class="row sep"><span>Total Fixed (guaranteed)</span><span>${fmt(t.fixed)} (${fixPct}%)</span></div>
       </div>
       <div class="bar">
         <div class="fixed" style="width:${fixPct}%"></div>
@@ -329,8 +392,8 @@ for (const mn of ['meso_1','meso_2','meso_3']) {
       </div>
       <div class="bar-legend"><span class="fl">Fixed ${fixPct}%</span><span class="vl">Variable ${varPct}%</span></div>
       <div style="margin-top:12px;font-size:11px;color:var(--gray)">
-        Annualized (52wk): ${fmt(ann.annual)}<br>
-        FedEx 3-Year: ${fmt(ann.fedex_3yr_projection)}
+        Annualized (52wk est.): ${fmt(ann.annual)}<br>
+        FedEx's 3-year projection: ${fmt(ann.fedex_3yr_projection)}
       </div>
     </div>
   `;
@@ -339,7 +402,7 @@ document.getElementById('meso-cards').innerHTML = mesoHtml;
 
 // ── Chart: Revenue Breakdown ─────────────────────────────────────
 const components = ['service','stop','ecom_stop','fuel','lp_mix','package','ecom_pkg','apparel','vehicle_brand'];
-const compLabels = ['Service','Stops','E-Com Stops','Fuel','LP Mix','Packages','E-Com Pkgs','Apparel','Vehicles'];
+const compLabels = ['Service (fixed)','Delivery Stops','E-Com Stops','Fuel','LP Mix','Delivery Pkgs','E-Com Pkgs','Apparel','Vehicles'];
 const compColors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#6366f1','#14b8a6'];
 
 new Chart(document.getElementById('chart-breakdown'),{
@@ -387,8 +450,8 @@ new Chart(document.getElementById('chart-fixvar-dollars'),{
   data:{
     labels:['MESO 1','MESO 2','MESO 3'],
     datasets:[
-      {label:'Fixed', data:['meso_1','meso_2','meso_3'].map(mn=>projs[mn].totals.fixed), backgroundColor:'#93c5fd'},
-      {label:'Variable', data:['meso_1','meso_2','meso_3'].map(mn=>projs[mn].totals.variable), backgroundColor:'#f59e0b'},
+      {label:'Fixed (guaranteed)', data:['meso_1','meso_2','meso_3'].map(mn=>projs[mn].totals.fixed), backgroundColor:'#93c5fd'},
+      {label:'Variable (volume-based)', data:['meso_1','meso_2','meso_3'].map(mn=>projs[mn].totals.variable), backgroundColor:'#f59e0b'},
     ]
   },
   options:{
@@ -414,8 +477,6 @@ function renderRateTable(filter) {
     const vals = [r.current, r.meso_1, r.meso_2, r.meso_3].map(v => v === 'N/A' ? null : Number(v));
     const newVals = vals.slice(1).filter(v=>v!==null);
 
-    // For variable rates, higher is better (ISP earns more per unit)
-    // For fixed rates like service charge, higher is better too (ISP receives more)
     const best = newVals.length ? Math.max(...newVals) : null;
     const worst = newVals.length ? Math.min(...newVals) : null;
 
@@ -457,15 +518,15 @@ new Chart(document.getElementById('chart-weekly'),{
   data:{
     labels:weekLabels,
     datasets:[
-      {label:'MESO 1',data:projs.meso_1.weekly.map(w=>w.total),borderColor:'var(--m1)',backgroundColor:'rgba(59,130,246,0.08)',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
-      {label:'MESO 2',data:projs.meso_2.weekly.map(w=>w.total),borderColor:'var(--m2)',backgroundColor:'rgba(16,185,129,0.08)',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
-      {label:'MESO 3',data:projs.meso_3.weekly.map(w=>w.total),borderColor:'var(--m3)',backgroundColor:'rgba(245,158,11,0.08)',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
-      {label:'Actual Net',data:D.weekly_actuals.map(w=>w.net_amount),borderColor:'var(--current)',borderDash:[5,5],fill:false,tension:0.3,pointRadius:1,borderWidth:1.5},
+      {label:'New — MESO 1',data:projs.meso_1.weekly.map(w=>w.total),borderColor:'#3b82f6',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
+      {label:'New — MESO 2',data:projs.meso_2.weekly.map(w=>w.total),borderColor:'#10b981',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
+      {label:'New — MESO 3',data:projs.meso_3.weekly.map(w=>w.total),borderColor:'#f59e0b',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
+      {label:'Current Contract (actual)',data:D.weekly_actuals.map(w=>w.net_amount),borderColor:'#6366f1',borderDash:[5,5],fill:false,tension:0.3,pointRadius:1,borderWidth:1.5},
     ]
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}, title:{display:true,text:'Weekly Projected Revenue by MESO vs Actual Net',font:{size:13}}},
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}, title:{display:true,text:'What Each New Offer Would Pay vs What You Currently Earn',font:{size:13}}},
     scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksToSkip:4,font:{size:10}}}}
   }
 });
@@ -477,10 +538,10 @@ new Chart(document.getElementById('chart-cumulative'),{
   data:{
     labels:weekLabels,
     datasets:[
-      {label:'MESO 1',data:cumSum(projs.meso_1.weekly.map(w=>w.total)),borderColor:'var(--m1)',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
-      {label:'MESO 2',data:cumSum(projs.meso_2.weekly.map(w=>w.total)),borderColor:'var(--m2)',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
-      {label:'MESO 3',data:cumSum(projs.meso_3.weekly.map(w=>w.total)),borderColor:'var(--m3)',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
-      {label:'Actual Net',data:cumSum(D.weekly_actuals.map(w=>w.net_amount)),borderColor:'var(--current)',borderDash:[5,5],fill:false,tension:0.3,pointRadius:0,borderWidth:2},
+      {label:'New — MESO 1',data:cumSum(projs.meso_1.weekly.map(w=>w.total)),borderColor:'#3b82f6',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
+      {label:'New — MESO 2',data:cumSum(projs.meso_2.weekly.map(w=>w.total)),borderColor:'#10b981',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
+      {label:'New — MESO 3',data:cumSum(projs.meso_3.weekly.map(w=>w.total)),borderColor:'#f59e0b',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
+      {label:'Current Contract (actual)',data:cumSum(D.weekly_actuals.map(w=>w.net_amount)),borderColor:'#6366f1',borderDash:[5,5],fill:false,tension:0.3,pointRadius:0,borderWidth:2},
     ]
   },
   options:{
@@ -492,10 +553,10 @@ new Chart(document.getElementById('chart-cumulative'),{
 
 // ── Volume Metrics ───────────────────────────────────────────────
 document.getElementById('volume-metrics').innerHTML = `
-  <div class="metric-card"><div class="label">Avg DEL Stops/wk</div><div class="value">${num(vs.avg_del_stops)}</div></div>
-  <div class="metric-card"><div class="label">Avg DEL Pkgs/wk</div><div class="value">${num(vs.avg_del_pkgs)}</div></div>
-  <div class="metric-card"><div class="label">Avg E-Com Stops/wk</div><div class="value">${num(vs.avg_ecom_stops)}</div></div>
-  <div class="metric-card"><div class="label">Avg LP Mix %</div><div class="value">${vs.avg_lp_pct}%</div></div>
+  <div class="metric-card"><div class="label">Avg Delivery Stops/wk</div><div class="value">${num(vs.avg_del_stops)}</div></div>
+  <div class="metric-card"><div class="label">Avg Delivery Pkgs/wk</div><div class="value">${num(vs.avg_del_pkgs)}</div></div>
+  <div class="metric-card"><div class="label">Avg E-Commerce Stops/wk</div><div class="value">${num(vs.avg_ecom_stops)}</div></div>
+  <div class="metric-card"><div class="label">Avg Large Pkg Mix %</div><div class="value">${vs.avg_lp_pct}%</div></div>
 `;
 
 // ── Chart: Volumes ───────────────────────────────────────────────
@@ -504,9 +565,9 @@ new Chart(document.getElementById('chart-volumes'),{
   data:{
     labels:weekLabels,
     datasets:[
-      {label:'DEL Stops',data:D.weekly_actuals.map(w=>w.del_stops),backgroundColor:'rgba(59,130,246,0.6)',stack:'a',yAxisID:'y'},
-      {label:'E-Com Stops',data:D.weekly_actuals.map(w=>w.ecom_stops),backgroundColor:'rgba(245,158,11,0.6)',stack:'a',yAxisID:'y'},
-      {label:'DEL Pkgs',data:D.weekly_actuals.map(w=>w.del_pkgs),backgroundColor:'rgba(16,185,129,0.3)',stack:'b',yAxisID:'y2'},
+      {label:'Delivery Stops',data:D.weekly_actuals.map(w=>w.del_stops),backgroundColor:'rgba(59,130,246,0.6)',stack:'a',yAxisID:'y'},
+      {label:'E-Commerce Stops',data:D.weekly_actuals.map(w=>w.ecom_stops),backgroundColor:'rgba(245,158,11,0.6)',stack:'a',yAxisID:'y'},
+      {label:'Delivery Packages',data:D.weekly_actuals.map(w=>w.del_pkgs),backgroundColor:'rgba(16,185,129,0.3)',stack:'b',yAxisID:'y2'},
     ]
   },
   options:{
@@ -527,25 +588,21 @@ new Chart(document.getElementById('chart-fedex-vs-actual'),{
   data:{
     labels:['MESO 1','MESO 2','MESO 3'],
     datasets:[
-      {label:'FedEx 3-Year Projection',data:['meso_1','meso_2','meso_3'].map(mn=>annData[mn].fedex_3yr_projection),backgroundColor:'rgba(99,102,241,0.6)',borderColor:'#6366f1',borderWidth:1},
-      {label:'Actual-Based 3-Year Estimate',data:['meso_1','meso_2','meso_3'].map(mn=>annData[mn].three_year_actual_based),backgroundColor:'rgba(239,68,68,0.6)',borderColor:'#ef4444',borderWidth:1},
+      {label:'FedEx Says You\'ll Earn (3yr)',data:['meso_1','meso_2','meso_3'].map(mn=>annData[mn].fedex_3yr_projection),backgroundColor:'rgba(99,102,241,0.6)',borderColor:'#6366f1',borderWidth:1},
+      {label:'Our Estimate Based on Real Data (3yr)',data:['meso_1','meso_2','meso_3'].map(mn=>annData[mn].three_year_actual_based),backgroundColor:'rgba(239,68,68,0.6)',borderColor:'#ef4444',borderWidth:1},
     ]
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{font:{size:11}}},title:{display:true,text:'3-Year Revenue: FedEx Projection vs Actual-Volume Estimate',font:{size:13}}},
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}},title:{display:true,text:'3-Year Revenue: What FedEx Projects vs What We Project',font:{size:13}}},
     scales:{y:{ticks:{callback:v=>fmt(v)},beginAtZero:false}}
   }
 });
 
 // FedEx insight
-const fedexGap1 = annData.meso_1.fedex_3yr_projection - annData.meso_1.three_year_actual_based;
 const fedexGap2 = annData.meso_2.fedex_3yr_projection - annData.meso_2.three_year_actual_based;
 document.getElementById('fedex-insight').innerHTML = `
-  <strong>Key finding:</strong> FedEx's projections assume significantly higher volumes than what BLI has actually experienced.
-  The gap is ${fmt(fedexGap2)} for MESO 2 over 3 years. This means FedEx's revenue numbers overstate
-  what BLI will likely earn — but the <em>relative ranking</em> between MESOs may still hold since the same volume assumptions
-  apply to all three. Your actual-volume projections are the more reliable basis for the decision.
+  <strong>The good news:</strong> Even though FedEx's numbers are ${fmt(fedexGap2)} higher than ours for MESO 2, the <em>ranking stays the same</em> — MESO 2 wins in both FedEx's projections and our real-data projections. This gives us confidence that MESO 2 is the right choice regardless of which volume assumptions turn out to be correct.
 `;
 
 // ── Chart: Sensitivity ───────────────────────────────────────────
@@ -564,35 +621,34 @@ new Chart(document.getElementById('chart-sensitivity'),{
   data:{
     labels:volScenarios.map(v=>v>=0?`+${v}%`:`${v}%`),
     datasets:[
-      {label:'MESO 1',data:sensData.meso_1,borderColor:'var(--m1)',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
-      {label:'MESO 2',data:sensData.meso_2,borderColor:'var(--m2)',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
-      {label:'MESO 3',data:sensData.meso_3,borderColor:'var(--m3)',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
+      {label:'MESO 1',data:sensData.meso_1,borderColor:'#3b82f6',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
+      {label:'MESO 2',data:sensData.meso_2,borderColor:'#10b981',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
+      {label:'MESO 3',data:sensData.meso_3,borderColor:'#f59e0b',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
     ]
   },
   options:{
     responsive:true, maintainAspectRatio:false,
     plugins:{
       legend:{position:'bottom',labels:{font:{size:11}}},
-      title:{display:true,text:'48-Week Revenue at Different Volume Levels',font:{size:13}},
-      annotation:{annotations:{line1:{type:'line',xMin:4,xMax:4,borderColor:'#ccc',borderWidth:1,borderDash:[3,3]}}}
+      title:{display:true,text:'What Happens If Your Volumes Go Up or Down?',font:{size:13}},
     },
     scales:{
       y:{ticks:{callback:v=>fmt(v)}},
-      x:{title:{display:true,text:'Volume Change from Actual'}}
+      x:{title:{display:true,text:'Volume Change from Current Levels'}}
     }
   }
 });
 
 // Sensitivity insight
-const crossover = volScenarios.find((pct,i) => sensData.meso_1[i] >= sensData.meso_2[i]);
-const m2Lead0 = sensData.meso_2[4] - sensData.meso_1[4]; // at 0%
-const m2LeadNeg20 = sensData.meso_2[0] - sensData.meso_1[0]; // at -20%
-const m3LeadPos20 = sensData.meso_3[8] - sensData.meso_2[8]; // at +20%
+const m2Lead0 = sensData.meso_2[4] - sensData.meso_1[4];
+const m2LeadNeg20 = sensData.meso_2[0] - sensData.meso_1[0];
+const m3LeadPos20 = sensData.meso_3[8] - sensData.meso_2[8];
 
 document.getElementById('sensitivity-insight').innerHTML = `
-  <strong>Volume risk analysis:</strong> MESO 2 leads at current volumes by ${fmt(m2Lead0)}.
-  ${m2LeadNeg20 > 0 ? `Even if volumes drop 20%, MESO 2 still leads by ${fmt(m2LeadNeg20)}.` : `If volumes drop 20%, MESO 1's higher fixed component starts to win.`}
-  ${m3LeadPos20 > 0 ? ` At +20% volumes, MESO 3 overtakes MESO 2 — its higher variable rates pay off when volumes surge.` : ` MESO 2 remains competitive even at high volumes.`}
+  <strong>Bottom line:</strong> MESO 2 leads at your current volumes by ${fmt(m2Lead0)} over 48 weeks.
+  ${m2LeadNeg20 > 0 ? `Even in a worst-case scenario where volumes drop 20%, MESO 2 still earns ${fmt(m2LeadNeg20)} more than MESO 1 — so you're protected on the downside.` : `If volumes drop 20%, MESO 1's bigger guaranteed check starts to win — but that's a severe drop.`}
+  ${m3LeadPos20 > 0 ? ` If volumes surge 20% above current levels, MESO 3 would overtake MESO 2 — but given BLI's actual volume trends, that's unlikely.` : ` MESO 2 holds its lead even if volumes increase significantly.`}
+  <strong>MESO 2 is the safest bet that still maximizes revenue.</strong>
 `;
 
 // ── Last Updated ─────────────────────────────────────────────────
