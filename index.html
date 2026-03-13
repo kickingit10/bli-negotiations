@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLI Contract Negotiation Analyzer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#6366f1}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark);min-height:100vh}
+
+/* Nav */
+.topnav{background:#1a1a2e;padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.topnav a{color:#94a3b8;text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;transition:all .15s}
+.topnav a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.topnav a.active{color:#fff;background:var(--blue)}
+.topnav .logo{color:#fff;font-weight:800;font-size:15px;letter-spacing:-0.5px;margin-right:auto}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:48px 20px 72px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:#f0f2f5;border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
+.hero h1{font-size:28px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
+.hero .sub{font-size:14px;opacity:0.85;margin-bottom:16px}
+.deadline{display:inline-block;background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;backdrop-filter:blur(4px)}
+.deadline .days{color:#fbbf24;font-size:18px}
+
+/* Container */
+.container{max-width:1200px;margin:-30px auto 0;padding:0 20px 60px;position:relative;z-index:1}
+
+/* Cards */
+.card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px}
+.card h2{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--dark);display:flex;align-items:center;gap:8px}
+.card h2 .icon{font-size:20px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-header h2{margin-bottom:0}
+
+/* Winner banner */
+.winner-banner{background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-radius:12px;padding:28px;margin-bottom:20px;text-align:center;box-shadow:0 4px 16px rgba(5,150,105,0.3)}
+.winner-banner h2{color:#fff;font-size:22px;margin-bottom:4px;justify-content:center}
+.winner-banner .amount{font-size:36px;font-weight:800;margin:8px 0}
+.winner-banner .detail{font-size:14px;opacity:0.9}
+
+/* Metric cards */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.metric-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-align:center}
+.metric-card .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray);margin-bottom:4px}
+.metric-card .value{font-size:22px;font-weight:800;color:var(--dark)}
+.metric-card .sub{font-size:11px;color:var(--gray);margin-top:2px}
+.metric-card.highlight{border:2px solid var(--green);background:#f0fdf4}
+
+/* MESO comparison cards */
+.meso-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.meso-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-top:4px solid var(--gray);position:relative}
+.meso-card.m1{border-top-color:var(--m1)}
+.meso-card.m2{border-top-color:var(--m2)}
+.meso-card.m3{border-top-color:var(--m3)}
+.meso-card.winner::after{content:'★ BEST';position:absolute;top:10px;right:10px;background:var(--green);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800}
+.meso-card h3{font-size:16px;font-weight:700;margin-bottom:12px}
+.meso-card .total{font-size:28px;font-weight:800;margin:8px 0}
+.meso-card .m1 .total{color:var(--m1)}
+.meso-card .breakdown{font-size:12px;color:var(--gray);line-height:1.8}
+.meso-card .breakdown .row{display:flex;justify-content:space-between}
+.meso-card .breakdown .row.sep{border-top:1px solid var(--border);padding-top:6px;margin-top:6px;font-weight:700;color:var(--dark)}
+.meso-card .bar{height:6px;border-radius:3px;background:#e5e7eb;margin:12px 0 4px;overflow:hidden;display:flex}
+.meso-card .bar .fixed{background:var(--blue)}
+.meso-card .bar .variable{background:var(--amber)}
+.meso-card .bar-legend{display:flex;gap:12px;font-size:10px;color:var(--gray)}
+.meso-card .bar-legend span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.meso-card .bar-legend .fl::before{background:var(--blue)}
+.meso-card .bar-legend .vl::before{background:var(--amber)}
+
+/* Tables */
+.rate-table{width:100%;border-collapse:collapse;font-size:13px}
+.rate-table th{background:var(--light);padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);position:sticky;top:0}
+.rate-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
+.rate-table tr:hover{background:#f8fafc}
+.rate-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.rate-table .best{background:#f0fdf4;font-weight:700;color:var(--green)}
+.rate-table .worst{color:var(--gray)}
+.rate-table .highlight-row{background:#fffbeb}
+
+/* Charts */
+.chart-container{position:relative;height:320px;margin:12px 0}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab{padding:8px 16px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab:hover{color:var(--dark)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* Section headers */
+.section-header{margin:32px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+.section-header h2{font-size:20px;font-weight:800;color:var(--dark)}
+.section-header p{font-size:13px;color:var(--gray);margin-top:2px}
+
+/* Insight box */
+.insight{background:#eff6ff;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.7;color:#1e40af}
+.insight strong{color:#1d4ed8}
+.insight.warn{background:#fffbeb;border-left-color:var(--amber);color:#92400e}
+.insight.warn strong{color:#78350f}
+.insight.good{background:#f0fdf4;border-left-color:var(--green);color:#065f46}
+.insight.good strong{color:#064e3b}
+
+/* Footer */
+.footer{text-align:center;padding:20px;color:var(--gray);font-size:11px}
+
+/* Responsive */
+@media(max-width:900px){
+  .meso-grid,.metrics{grid-template-columns:1fr 1fr}
+  .chart-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .meso-grid,.metrics{grid-template-columns:1fr}
+  .hero h1{font-size:22px}
+  .container{padding:0 12px 40px}
+  .rate-table{font-size:11px}
+  .rate-table th,.rate-table td{padding:6px 8px}
+}
+
+/* Print */
+@media print{
+  .topnav{display:none}
+  .hero{padding:20px;background:#1e3a5f !important;-webkit-print-color-adjust:exact}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="logo">Better Logistics Inc</span>
+  <a href="../site/dashboard.html">Operations Dashboard</a>
+  <a href="index.html" class="active">Contract Analyzer</a>
+</nav>
+
+<div class="hero">
+  <h1>Contract Negotiation Analyzer</h1>
+  <p class="sub">Agreement C8892307 — 48 Weeks of Actual Data vs. 3 MESO Offers</p>
+  <div class="deadline">Decision Deadline: <span class="days" id="countdown"></span></div>
+</div>
+
+<div class="container">
+
+<!-- Winner Banner -->
+<div class="winner-banner" id="winner-banner"></div>
+
+<!-- Key Metrics -->
+<div class="metrics" id="key-metrics"></div>
+
+<!-- ═══ SECTION 1: MESO Comparison ═══ -->
+<div class="section-header">
+  <h2>MESO Offer Comparison</h2>
+  <p>Each offer's rates applied to your actual 48-week operating volumes</p>
+</div>
+
+<div class="meso-grid" id="meso-cards"></div>
+
+<div class="card">
+  <h2><span class="icon">📊</span> Revenue Breakdown by Component</h2>
+  <div class="chart-container"><canvas id="chart-breakdown"></canvas></div>
+</div>
+
+<div class="card">
+  <h2><span class="icon">⚖️</span> Fixed vs Variable Mix</h2>
+  <div class="insight">
+    <strong>Why this matters:</strong> Higher variable % means more revenue when volumes are strong, but more risk if volumes drop. Higher fixed % provides a guaranteed floor regardless of volume fluctuations.
+  </div>
+  <div class="chart-row">
+    <div class="chart-container"><canvas id="chart-fixvar"></canvas></div>
+    <div class="chart-container"><canvas id="chart-fixvar-dollars"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 2: Rate Comparison ═══ -->
+<div class="section-header">
+  <h2>Rate-by-Rate Comparison</h2>
+  <p>Current contract (C8882435 Final) vs all 3 new MESO offers (C8892307 Year 1)</p>
+</div>
+
+<div class="card">
+  <div class="tabs" id="rate-tabs">
+    <div class="tab active" data-tab="all">All Rates</div>
+    <div class="tab" data-tab="variable">Variable Only</div>
+    <div class="tab" data-tab="fixed">Fixed Only</div>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="rate-table" id="rate-table">
+      <thead><tr>
+        <th>Rate Element</th>
+        <th class="num">Current</th>
+        <th class="num" style="color:var(--m1)">MESO 1</th>
+        <th class="num" style="color:var(--m2)">MESO 2</th>
+        <th class="num" style="color:var(--m3)">MESO 3</th>
+        <th class="num">Type</th>
+      </tr></thead>
+      <tbody id="rate-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: Weekly Trend ═══ -->
+<div class="section-header">
+  <h2>Weekly Revenue Projection</h2>
+  <p>How each MESO would have performed week-by-week on your actual volumes</p>
+</div>
+
+<div class="card">
+  <div class="chart-container" style="height:380px"><canvas id="chart-weekly"></canvas></div>
+</div>
+
+<div class="card">
+  <h2><span class="icon">📈</span> Cumulative Revenue Over Time</h2>
+  <div class="chart-container" style="height:380px"><canvas id="chart-cumulative"></canvas></div>
+</div>
+
+<!-- ═══ SECTION 4: Volume Context ═══ -->
+<div class="section-header">
+  <h2>Actual Volume Data</h2>
+  <p>48 weeks of real operating data from current contract C8882435</p>
+</div>
+
+<div class="metrics" id="volume-metrics"></div>
+
+<div class="card">
+  <h2><span class="icon">📦</span> Weekly Stop & Package Volumes</h2>
+  <div class="chart-container" style="height:340px"><canvas id="chart-volumes"></canvas></div>
+</div>
+
+<!-- ═══ SECTION 5: FedEx vs Reality ═══ -->
+<div class="section-header">
+  <h2>FedEx Projections vs Actual-Based Projections</h2>
+  <p>Comparing what FedEx says you'll earn vs what your real volumes indicate</p>
+</div>
+
+<div class="card">
+  <div class="chart-container"><canvas id="chart-fedex-vs-actual"></canvas></div>
+  <div class="insight warn" id="fedex-insight"></div>
+</div>
+
+<!-- ═══ SECTION 6: Sensitivity ═══ -->
+<div class="section-header">
+  <h2>Sensitivity Analysis</h2>
+  <p>How volume changes affect each MESO differently</p>
+</div>
+
+<div class="card">
+  <h2><span class="icon">🎚️</span> Revenue at Different Volume Levels</h2>
+  <p style="font-size:13px;color:var(--gray);margin-bottom:12px">What happens if volumes go up or down 10-20% from actual?</p>
+  <div class="chart-container" style="height:360px"><canvas id="chart-sensitivity"></canvas></div>
+  <div class="insight" id="sensitivity-insight"></div>
+</div>
+
+<div class="footer">
+  BLI Contract Negotiation Analyzer — Built with actual charge statement data<br>
+  Last updated: <span id="last-updated"></span>
+</div>
+
+</div>
+
+<script>
+// ── Load data and render ─────────────────────────────────────────
+fetch('data.json').then(r=>r.json()).then(D=>{
+
+const fmt = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmt2 = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtPct = n => n.toFixed(1)+'%';
+const num = n => Number(n).toLocaleString('en-US');
+
+// ── Countdown ────────────────────────────────────────────────────
+const deadline = new Date('2026-03-24');
+const today = new Date();
+const daysLeft = Math.ceil((deadline - today) / (1000*60*60*24));
+document.getElementById('countdown').textContent = daysLeft > 0 ? `${daysLeft} days left` : 'DEADLINE PASSED';
+
+// ── Winner Banner ────────────────────────────────────────────────
+const projs = D.projections;
+const totals = {meso_1:projs.meso_1.totals.total, meso_2:projs.meso_2.totals.total, meso_3:projs.meso_3.totals.total};
+const winner = Object.entries(totals).sort((a,b)=>b[1]-a[1])[0];
+const loser = Object.entries(totals).sort((a,b)=>a[1]-b[1])[0];
+const diff = winner[1] - loser[1];
+const labels = {meso_1:'MESO 1',meso_2:'MESO 2',meso_3:'MESO 3'};
+
+document.getElementById('winner-banner').innerHTML = `
+  <h2>★ ${labels[winner[0]]} Maximizes Revenue on Actual Volumes</h2>
+  <div class="amount">${fmt(winner[1])}</div>
+  <div class="detail">Over 48 weeks of real operating data — ${fmt(diff)} more than ${labels[loser[0]]} (${(diff/loser[1]*100).toFixed(1)}% advantage)</div>
+`;
+
+// ── Key Metrics ──────────────────────────────────────────────────
+const vs = D.volume_stats;
+document.getElementById('key-metrics').innerHTML = `
+  <div class="metric-card"><div class="label">Weeks Analyzed</div><div class="value">${vs.weeks}</div><div class="sub">${vs.date_range}</div></div>
+  <div class="metric-card highlight"><div class="label">Best MESO (48wk)</div><div class="value">${fmt(winner[1])}</div><div class="sub">${labels[winner[0]]}</div></div>
+  <div class="metric-card"><div class="label">Current Contract Net</div><div class="value">${fmt(D.current_contract.totals.net)}</div><div class="sub">48-week actual</div></div>
+  <div class="metric-card"><div class="label">Avg Weekly Net</div><div class="value">${fmt(vs.avg_net)}</div><div class="sub">${vs.avg_drivers} avg drivers</div></div>
+`;
+
+// ── MESO Cards ───────────────────────────────────────────────────
+const mesoColors = {meso_1:'m1',meso_2:'m2',meso_3:'m3'};
+let mesoHtml = '';
+for (const mn of ['meso_1','meso_2','meso_3']) {
+  const p = projs[mn];
+  const t = p.totals;
+  const isWinner = mn === winner[0];
+  const fixPct = (t.fixed / t.total * 100).toFixed(1);
+  const varPct = (t.variable / t.total * 100).toFixed(1);
+  const ann = D.annualized[mn];
+  mesoHtml += `
+    <div class="meso-card ${mesoColors[mn]} ${isWinner?'winner':''}">
+      <h3>${labels[mn]}</h3>
+      <div class="total" style="color:var(--${mesoColors[mn]})">${fmt(t.total)}</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:10px">48-week projected revenue</div>
+      <div class="breakdown">
+        <div class="row"><span>Service Charge</span><span>${fmt(t.service)}</span></div>
+        <div class="row"><span>Stop Revenue</span><span>${fmt(t.stop)}</span></div>
+        <div class="row"><span>E-Com Stops</span><span>${fmt(t.ecom_stop)}</span></div>
+        <div class="row"><span>Fuel Surcharge</span><span>${fmt(t.fuel)}</span></div>
+        <div class="row"><span>LP Mix</span><span>${fmt(t.lp_mix)}</span></div>
+        <div class="row"><span>Packages</span><span>${fmt(t.package + t.ecom_pkg)}</span></div>
+        <div class="row"><span>Apparel + Vehicles</span><span>${fmt(t.apparel + t.vehicle_brand)}</span></div>
+        <div class="row sep"><span>Variable</span><span>${fmt(t.variable)} (${varPct}%)</span></div>
+        <div class="row sep"><span>Fixed</span><span>${fmt(t.fixed)} (${fixPct}%)</span></div>
+      </div>
+      <div class="bar">
+        <div class="fixed" style="width:${fixPct}%"></div>
+        <div class="variable" style="width:${varPct}%"></div>
+      </div>
+      <div class="bar-legend"><span class="fl">Fixed ${fixPct}%</span><span class="vl">Variable ${varPct}%</span></div>
+      <div style="margin-top:12px;font-size:11px;color:var(--gray)">
+        Annualized (52wk): ${fmt(ann.annual)}<br>
+        FedEx 3-Year: ${fmt(ann.fedex_3yr_projection)}
+      </div>
+    </div>
+  `;
+}
+document.getElementById('meso-cards').innerHTML = mesoHtml;
+
+// ── Chart: Revenue Breakdown ─────────────────────────────────────
+const components = ['service','stop','ecom_stop','fuel','lp_mix','package','ecom_pkg','apparel','vehicle_brand'];
+const compLabels = ['Service','Stops','E-Com Stops','Fuel','LP Mix','Packages','E-Com Pkgs','Apparel','Vehicles'];
+const compColors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#6366f1','#14b8a6'];
+
+new Chart(document.getElementById('chart-breakdown'),{
+  type:'bar',
+  data:{
+    labels:['MESO 1','MESO 2','MESO 3'],
+    datasets: components.map((c,i) => ({
+      label: compLabels[i],
+      data: ['meso_1','meso_2','meso_3'].map(mn => projs[mn].totals[c]),
+      backgroundColor: compColors[i],
+    }))
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{
+      x:{stacked:true},
+      y:{stacked:true, ticks:{callback:v=>fmt(v)}}
+    }
+  }
+});
+
+// ── Chart: Fixed vs Variable % ───────────────────────────────────
+new Chart(document.getElementById('chart-fixvar'),{
+  type:'doughnut',
+  data:{
+    labels:['MESO 1 Fixed','MESO 1 Variable','MESO 2 Fixed','MESO 2 Variable','MESO 3 Fixed','MESO 3 Variable'],
+    datasets:[
+      {label:'MESO 1', data:[projs.meso_1.totals.fixed, projs.meso_1.totals.variable], backgroundColor:['#93c5fd','#3b82f6']},
+      {label:'MESO 2', data:[projs.meso_2.totals.fixed, projs.meso_2.totals.variable], backgroundColor:['#6ee7b7','#10b981']},
+      {label:'MESO 3', data:[projs.meso_3.totals.fixed, projs.meso_3.totals.variable], backgroundColor:['#fcd34d','#f59e0b']},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      title:{display:true,text:'Fixed/Variable Split by MESO',font:{size:13}}
+    }
+  }
+});
+
+new Chart(document.getElementById('chart-fixvar-dollars'),{
+  type:'bar',
+  data:{
+    labels:['MESO 1','MESO 2','MESO 3'],
+    datasets:[
+      {label:'Fixed', data:['meso_1','meso_2','meso_3'].map(mn=>projs[mn].totals.fixed), backgroundColor:'#93c5fd'},
+      {label:'Variable', data:['meso_1','meso_2','meso_3'].map(mn=>projs[mn].totals.variable), backgroundColor:'#f59e0b'},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}, title:{display:true,text:'Fixed vs Variable Revenue ($)',font:{size:13}}},
+    scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>fmt(v)}}}
+  }
+});
+
+// ── Rate Table ───────────────────────────────────────────────────
+const variableRates = ['Stop Charge','Surge Stop','Fuel Surcharge','Package Charge','LP Mix Charge','E-Com Stop','E-Com Package'];
+const fixedRates = ['Service Charge (weekly)','Apparel (weekly)','Vehicle Brand (per vehicle/wk)','Early Pull','Advance Contract Svc (Y1 only)'];
+
+function renderRateTable(filter) {
+  const tbody = document.getElementById('rate-tbody');
+  tbody.innerHTML = '';
+  D.rate_comparison.forEach(r => {
+    const isVar = variableRates.includes(r.label);
+    const isFix = fixedRates.includes(r.label);
+    if (filter === 'variable' && !isVar) return;
+    if (filter === 'fixed' && !isFix) return;
+
+    const vals = [r.current, r.meso_1, r.meso_2, r.meso_3].map(v => v === 'N/A' ? null : Number(v));
+    const newVals = vals.slice(1).filter(v=>v!==null);
+
+    // For variable rates, higher is better (ISP earns more per unit)
+    // For fixed rates like service charge, higher is better too (ISP receives more)
+    const best = newVals.length ? Math.max(...newVals) : null;
+    const worst = newVals.length ? Math.min(...newVals) : null;
+
+    const fmtCell = (v, idx) => {
+      if (v === null || v === 'N/A') return '<td class="num">—</td>';
+      const isBest = idx > 0 && v === best && best !== worst;
+      const isWorst = idx > 0 && v === worst && best !== worst;
+      const cls = isBest ? 'best' : (isWorst ? 'worst' : '');
+      const display = v >= 100 ? fmt(v) : fmt2(v);
+      return `<td class="num ${cls}">${display}</td>`;
+    };
+
+    const type = isVar ? 'Variable' : (isFix ? 'Fixed' : 'Other');
+    tbody.innerHTML += `<tr${r.label.includes('Advance')||r.label.includes('Liquidated')?' class="highlight-row"':''}>
+      <td>${r.label}</td>
+      ${fmtCell(vals[0],0)}${fmtCell(vals[1],1)}${fmtCell(vals[2],2)}${fmtCell(vals[3],3)}
+      <td class="num" style="font-size:11px;color:${isVar?'var(--amber)':isFix?'var(--blue)':'var(--gray)'}">${type}</td>
+    </tr>`;
+  });
+}
+renderRateTable('all');
+
+document.querySelectorAll('#rate-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#rate-tabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    renderRateTable(tab.dataset.tab);
+  });
+});
+
+// ── Chart: Weekly Revenue ────────────────────────────────────────
+const weekLabels = projs.meso_1.weekly.map(w => {
+  const parts = w.week_ending.split('/');
+  return parts[0]+'/'+parts[1];
+});
+
+new Chart(document.getElementById('chart-weekly'),{
+  type:'line',
+  data:{
+    labels:weekLabels,
+    datasets:[
+      {label:'MESO 1',data:projs.meso_1.weekly.map(w=>w.total),borderColor:'var(--m1)',backgroundColor:'rgba(59,130,246,0.08)',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
+      {label:'MESO 2',data:projs.meso_2.weekly.map(w=>w.total),borderColor:'var(--m2)',backgroundColor:'rgba(16,185,129,0.08)',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
+      {label:'MESO 3',data:projs.meso_3.weekly.map(w=>w.total),borderColor:'var(--m3)',backgroundColor:'rgba(245,158,11,0.08)',fill:false,tension:0.3,pointRadius:2,borderWidth:2},
+      {label:'Actual Net',data:D.weekly_actuals.map(w=>w.net_amount),borderColor:'var(--current)',borderDash:[5,5],fill:false,tension:0.3,pointRadius:1,borderWidth:1.5},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}, title:{display:true,text:'Weekly Projected Revenue by MESO vs Actual Net',font:{size:13}}},
+    scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksToSkip:4,font:{size:10}}}}
+  }
+});
+
+// ── Chart: Cumulative ────────────────────────────────────────────
+function cumSum(arr) { let s=0; return arr.map(v=>(s+=v,s)); }
+new Chart(document.getElementById('chart-cumulative'),{
+  type:'line',
+  data:{
+    labels:weekLabels,
+    datasets:[
+      {label:'MESO 1',data:cumSum(projs.meso_1.weekly.map(w=>w.total)),borderColor:'var(--m1)',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
+      {label:'MESO 2',data:cumSum(projs.meso_2.weekly.map(w=>w.total)),borderColor:'var(--m2)',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
+      {label:'MESO 3',data:cumSum(projs.meso_3.weekly.map(w=>w.total)),borderColor:'var(--m3)',fill:false,tension:0.3,pointRadius:0,borderWidth:2.5},
+      {label:'Actual Net',data:cumSum(D.weekly_actuals.map(w=>w.net_amount)),borderColor:'var(--current)',borderDash:[5,5],fill:false,tension:0.3,pointRadius:0,borderWidth:2},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{y:{ticks:{callback:v=>fmt(v)}},x:{ticks:{maxTicksToSkip:4,font:{size:10}}}}
+  }
+});
+
+// ── Volume Metrics ───────────────────────────────────────────────
+document.getElementById('volume-metrics').innerHTML = `
+  <div class="metric-card"><div class="label">Avg DEL Stops/wk</div><div class="value">${num(vs.avg_del_stops)}</div></div>
+  <div class="metric-card"><div class="label">Avg DEL Pkgs/wk</div><div class="value">${num(vs.avg_del_pkgs)}</div></div>
+  <div class="metric-card"><div class="label">Avg E-Com Stops/wk</div><div class="value">${num(vs.avg_ecom_stops)}</div></div>
+  <div class="metric-card"><div class="label">Avg LP Mix %</div><div class="value">${vs.avg_lp_pct}%</div></div>
+`;
+
+// ── Chart: Volumes ───────────────────────────────────────────────
+new Chart(document.getElementById('chart-volumes'),{
+  type:'bar',
+  data:{
+    labels:weekLabels,
+    datasets:[
+      {label:'DEL Stops',data:D.weekly_actuals.map(w=>w.del_stops),backgroundColor:'rgba(59,130,246,0.6)',stack:'a',yAxisID:'y'},
+      {label:'E-Com Stops',data:D.weekly_actuals.map(w=>w.ecom_stops),backgroundColor:'rgba(245,158,11,0.6)',stack:'a',yAxisID:'y'},
+      {label:'DEL Pkgs',data:D.weekly_actuals.map(w=>w.del_pkgs),backgroundColor:'rgba(16,185,129,0.3)',stack:'b',yAxisID:'y2'},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{
+      y:{position:'left',title:{display:true,text:'Stops'},ticks:{font:{size:10}}},
+      y2:{position:'right',title:{display:true,text:'Packages'},grid:{drawOnChartArea:false},ticks:{font:{size:10}}},
+      x:{ticks:{maxTicksToSkip:4,font:{size:10}}}
+    }
+  }
+});
+
+// ── Chart: FedEx vs Actual-Based ─────────────────────────────────
+const annData = D.annualized;
+new Chart(document.getElementById('chart-fedex-vs-actual'),{
+  type:'bar',
+  data:{
+    labels:['MESO 1','MESO 2','MESO 3'],
+    datasets:[
+      {label:'FedEx 3-Year Projection',data:['meso_1','meso_2','meso_3'].map(mn=>annData[mn].fedex_3yr_projection),backgroundColor:'rgba(99,102,241,0.6)',borderColor:'#6366f1',borderWidth:1},
+      {label:'Actual-Based 3-Year Estimate',data:['meso_1','meso_2','meso_3'].map(mn=>annData[mn].three_year_actual_based),backgroundColor:'rgba(239,68,68,0.6)',borderColor:'#ef4444',borderWidth:1},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}},title:{display:true,text:'3-Year Revenue: FedEx Projection vs Actual-Volume Estimate',font:{size:13}}},
+    scales:{y:{ticks:{callback:v=>fmt(v)},beginAtZero:false}}
+  }
+});
+
+// FedEx insight
+const fedexGap1 = annData.meso_1.fedex_3yr_projection - annData.meso_1.three_year_actual_based;
+const fedexGap2 = annData.meso_2.fedex_3yr_projection - annData.meso_2.three_year_actual_based;
+document.getElementById('fedex-insight').innerHTML = `
+  <strong>Key finding:</strong> FedEx's projections assume significantly higher volumes than what BLI has actually experienced.
+  The gap is ${fmt(fedexGap2)} for MESO 2 over 3 years. This means FedEx's revenue numbers overstate
+  what BLI will likely earn — but the <em>relative ranking</em> between MESOs may still hold since the same volume assumptions
+  apply to all three. Your actual-volume projections are the more reliable basis for the decision.
+`;
+
+// ── Chart: Sensitivity ───────────────────────────────────────────
+const volScenarios = [-20,-15,-10,-5,0,5,10,15,20];
+const sensData = {};
+for (const mn of ['meso_1','meso_2','meso_3']) {
+  sensData[mn] = volScenarios.map(pct => {
+    const scale = 1 + pct/100;
+    const p = projs[mn];
+    return p.totals.fixed + p.totals.variable * scale;
+  });
+}
+
+new Chart(document.getElementById('chart-sensitivity'),{
+  type:'line',
+  data:{
+    labels:volScenarios.map(v=>v>=0?`+${v}%`:`${v}%`),
+    datasets:[
+      {label:'MESO 1',data:sensData.meso_1,borderColor:'var(--m1)',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
+      {label:'MESO 2',data:sensData.meso_2,borderColor:'var(--m2)',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
+      {label:'MESO 3',data:sensData.meso_3,borderColor:'var(--m3)',fill:false,tension:0.3,borderWidth:2.5,pointRadius:3},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11}}},
+      title:{display:true,text:'48-Week Revenue at Different Volume Levels',font:{size:13}},
+      annotation:{annotations:{line1:{type:'line',xMin:4,xMax:4,borderColor:'#ccc',borderWidth:1,borderDash:[3,3]}}}
+    },
+    scales:{
+      y:{ticks:{callback:v=>fmt(v)}},
+      x:{title:{display:true,text:'Volume Change from Actual'}}
+    }
+  }
+});
+
+// Sensitivity insight
+const crossover = volScenarios.find((pct,i) => sensData.meso_1[i] >= sensData.meso_2[i]);
+const m2Lead0 = sensData.meso_2[4] - sensData.meso_1[4]; // at 0%
+const m2LeadNeg20 = sensData.meso_2[0] - sensData.meso_1[0]; // at -20%
+const m3LeadPos20 = sensData.meso_3[8] - sensData.meso_2[8]; // at +20%
+
+document.getElementById('sensitivity-insight').innerHTML = `
+  <strong>Volume risk analysis:</strong> MESO 2 leads at current volumes by ${fmt(m2Lead0)}.
+  ${m2LeadNeg20 > 0 ? `Even if volumes drop 20%, MESO 2 still leads by ${fmt(m2LeadNeg20)}.` : `If volumes drop 20%, MESO 1's higher fixed component starts to win.`}
+  ${m3LeadPos20 > 0 ? ` At +20% volumes, MESO 3 overtakes MESO 2 — its higher variable rates pay off when volumes surge.` : ` MESO 2 remains competitive even at high volumes.`}
+`;
+
+// ── Last Updated ─────────────────────────────────────────────────
+document.getElementById('last-updated').textContent = new Date(D.generated).toLocaleString();
+
+}).catch(err => {
+  document.querySelector('.container').innerHTML = `<div class="card" style="color:red;text-align:center;padding:40px">
+    <h2>Error Loading Data</h2><p>${err.message}</p><p>Ensure data.json is in the same directory.</p>
+  </div>`;
+});
+</script>
+</body>
+</html>
