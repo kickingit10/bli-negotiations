@@ -107,6 +107,14 @@ canvas{max-height:300px}
 
 <div class="container">
 
+<!-- Global View Toggle -->
+<div style="display:flex;justify-content:center;margin-bottom:16px">
+  <div style="background:#fff;border-radius:10px;padding:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:inline-flex;gap:4px">
+    <button class="toggle-btn active" id="viewAnnual" onclick="setTermView('annual')">52-Week Annualized View</button>
+    <button class="toggle-btn" id="viewFull" onclick="setTermView('full')">Full 113-Week Contract</button>
+  </div>
+</div>
+
 <!-- Section 1: Volume Transparency -->
 <div class="section" id="secVolume">
   <h2>Volume Transparency <span class="badge" style="background:#dbeafe;color:#1e40af">FedEx vs Actual</span></h2>
@@ -135,7 +143,7 @@ canvas{max-height:300px}
 <!-- Section 3: Rate-by-Rate Comparison & Sliders -->
 <div class="section" id="secRates">
   <h2>Rate Impact Analyzer <span class="badge" style="background:#fef3c7;color:#92400e">Per-Rate Sliders</span></h2>
-  <div class="desc">Adjust individual rates and see the annualized dollar impact instantly. Start from any MESO's rates and negotiate up or down. Impact shown over the full 113-week contract at your actual volume.</div>
+  <div class="desc" id="sliderDesc">Adjust individual rates and see the dollar impact instantly. Start from any MESO's rates and negotiate up or down. Impact shown over the annualized 52-week period at your actual volume.</div>
   <div class="grid-2">
     <div>
       <div class="toggle-row" style="margin-bottom:12px">
@@ -149,7 +157,7 @@ canvas{max-height:300px}
     <div>
       <div style="background:#f8fafc;border-radius:10px;padding:18px;margin-bottom:12px">
         <div class="kpi-mini">
-          <div class="lbl">Custom Rate Total (113-wk)</div>
+          <div class="lbl" id="sliderTotalLabel">Custom Rate Total (52-wk)</div>
           <div class="val" id="sliderTotal" style="color:var(--blue)">—</div>
         </div>
         <div class="grid-3" style="margin-top:12px;text-align:center">
@@ -175,21 +183,11 @@ canvas{max-height:300px}
 
 <!-- Section 5: Contract Period Impact -->
 <div class="section" id="secPeriod">
-  <h2>113-Week Contract Impact <span class="badge" style="background:#ede9fe;color:#5b21b6">Full Term</span></h2>
-  <div class="desc">Small rate differences add up over 113 weeks. This table shows the total dollar impact of each rate component difference vs your current C8882435 rates, using your actual trailing volume.</div>
+  <h2 id="periodTitle">Annual Contract Impact <span class="badge" style="background:#ede9fe;color:#5b21b6">Per Year</span></h2>
+  <div class="desc" id="periodDesc">Small rate differences add up. This table shows the total dollar impact of each rate component difference vs your current C8882435 rates, using your actual trailing volume.</div>
   <div style="overflow-x:auto">
     <table id="periodTable">
-      <thead>
-        <tr>
-          <th>Rate Component</th>
-          <th class="num">Current (C8882435)</th>
-          <th class="num" style="color:var(--m1)">MESO 1</th>
-          <th class="num" style="color:var(--m1)">Δ vs Current (113 wks)</th>
-          <th class="num" style="color:var(--m2)">MESO 2</th>
-          <th class="num" style="color:var(--m2)">Δ vs Current (113 wks)</th>
-          <th class="num" style="color:var(--m3)">MESO 3</th>
-          <th class="num" style="color:var(--m3)">Δ vs Current (113 wks)</th>
-        </tr>
+      <thead id="periodHead">
       </thead>
       <tbody id="periodBody"></tbody>
     </table>
@@ -317,6 +315,51 @@ function totalRevenueCurrent(vol_wk, weeks){
   return r.total * weeks;
 }
 
+// ===== GLOBAL TERM VIEW =====
+let termView = 'annual'; // 'annual' (52-wk Y1 only) or 'full' (113-wk Y1+Y2+Y3)
+
+function termWeeks(){ return termView==='annual'?52:113; }
+function termLabel(){ return termView==='annual'?'52-Week':'113-Week'; }
+
+function totalRevenueForTerm(meso, vol){
+  if(termView==='annual'){
+    return weeklyRev(meso.y1, vol).total * 52 + (meso.y1.advance||0);
+  }
+  return totalRevenue113(meso, vol);
+}
+
+function totalCurrentForTerm(vol){
+  return weeklyRev(CURRENT, vol).total * termWeeks();
+}
+
+function setTermView(mode){
+  termView = mode;
+  document.getElementById('viewAnnual').classList.toggle('active', mode==='annual');
+  document.getElementById('viewFull').classList.toggle('active', mode==='full');
+
+  // Update Section 3 description
+  document.getElementById('sliderDesc').textContent =
+    mode==='annual'
+      ? 'Adjust individual rates and see the dollar impact instantly. Start from any MESO\'s rates and negotiate up or down. Impact shown over the annualized 52-week period at your actual volume.'
+      : 'Adjust individual rates and see the dollar impact instantly. Start from any MESO\'s rates and negotiate up or down. Impact shown over the full 113-week contract at your actual volume.';
+  document.getElementById('sliderTotalLabel').textContent = 'Custom Rate Total ('+termLabel()+')';
+
+  // Update Section 5 heading/description
+  document.getElementById('periodTitle').innerHTML =
+    mode==='annual'
+      ? 'Annual Contract Impact <span class="badge" style="background:#ede9fe;color:#5b21b6">Per Year (52 wk)</span>'
+      : 'Full Contract Period Impact <span class="badge" style="background:#ede9fe;color:#5b21b6">113 Weeks</span>';
+  document.getElementById('periodDesc').textContent =
+    mode==='annual'
+      ? 'Small rate differences add up. This table shows the annualized dollar impact of each rate component difference vs your current C8882435 rates, using your actual trailing volume.'
+      : 'Small rate differences add up. This table shows the total dollar impact over the full 113-week contract of each rate component difference vs your current C8882435 rates, using your actual trailing volume.';
+
+  renderRevenue();
+  updateSliders();
+  renderBreakeven();
+  renderPeriodImpact();
+}
+
 // ===== COUNTDOWN =====
 const now = new Date('2026-03-13');
 const daysLeft = Math.ceil((CONTRACT.deadline - now)/(1000*60*60*24));
@@ -389,22 +432,23 @@ function setVolMode(mode){
 
 function renderRevenue(){
   const vol = getVolForMode(volMode);
-  const currentWk = weeklyRev(CURRENT, vol);
-  const current113 = currentWk.total * 113;
+  const wks = termWeeks();
+  const lbl = termLabel();
+  const currentTotal = totalCurrentForTerm(vol);
 
   let html = '';
   ['m1','m2','m3'].forEach(key=>{
     const m = MESOS[key];
-    const total113 = totalRevenue113(m, vol);
+    const mesoTotal = totalRevenueForTerm(m, vol);
     const wkRev = weeklyRev(m.y1, vol);
-    const diff = total113 - current113;
-    const diffPct = (diff/current113)*100;
+    const diff = mesoTotal - currentTotal;
+    const diffPct = (diff/currentTotal)*100;
 
     html += `<div class="meso-card ${key}">
       <h3>${m.name}</h3>
       <div class="meso-sub">${diff>=0?'More':'Less'} variable, ${m.y1.service>9000?'higher':'lower'} fixed</div>
-      <div class="meso-label">113-Week Total Revenue</div>
-      <div class="meso-val" style="color:${m.color}">${fm(Math.round(total113))}</div>
+      <div class="meso-label">${lbl} Total Revenue</div>
+      <div class="meso-val" style="color:${m.color}">${fm(Math.round(mesoTotal))}</div>
       <div style="font-size:12px;font-weight:600;margin:4px 0;${diff>=0?'color:var(--green)':'color:var(--red)'}">${diff>=0?'+':''}${fm(Math.round(diff))} vs current rates (${pct(diffPct)})</div>
       <div style="margin-top:10px">
         <div class="meso-row"><span class="label">Weekly Avg (Y1)</span><span class="val">${fm(Math.round(wkRev.total))}</span></div>
@@ -496,14 +540,15 @@ function updateSliders(){
   };
 
   const wk = weeklyRev(fullRates, vol);
-  const total113 = wk.total * 113 + (fullRates.advance||0);
+  const wks = termWeeks();
+  const customTotal = wk.total * wks + (fullRates.advance||0);
 
-  document.getElementById('sliderTotal').textContent = fm(Math.round(total113));
+  document.getElementById('sliderTotal').textContent = fm(Math.round(customTotal));
 
   // Compare to each MESO
   ['m1','m2','m3'].forEach(key=>{
-    const mt = totalRevenue113(MESOS[key], vol);
-    const diff = total113 - mt;
+    const mt = totalRevenueForTerm(MESOS[key], vol);
+    const diff = customTotal - mt;
     const el = document.getElementById('sliderVs'+key.charAt(0).toUpperCase()+key.charAt(1));
     el.textContent = (diff>=0?'+':'')+fm(Math.round(diff));
     el.style.color = diff>=0?'var(--green)':'var(--red)';
@@ -522,19 +567,18 @@ function updateSliders(){
 // ===== SECTION 4: BREAK-EVEN =====
 function renderBreakeven(){
   const vol = ACTUAL_VOL;
-  const currentWk = weeklyRev(CURRENT, vol).total;
-  const current113 = currentWk * 113;
+  const wks = termWeeks();
+  const lbl = termLabel();
+  const currentTotal = totalCurrentForTerm(vol);
 
   let html = '';
   const beData = [];
 
   ['m1','m2','m3'].forEach(key=>{
     const m = MESOS[key];
-    const mesoWk = weeklyRev(m.y1, vol).total;
-    const meso113 = totalRevenue113(m, vol);
+    const mesoTotal = totalRevenueForTerm(m, vol);
 
     // Binary search: at what volume multiplier does meso = current?
-    // meso revenue is mix of fixed and variable. We scale only the variable components.
     let lo=0,hi=2;
     for(let i=0;i<50;i++){
       const mid=(lo+hi)/2;
@@ -543,14 +587,14 @@ function renderBreakeven(){
         del_pkgs_wk:vol.del_pkgs_wk*mid, lp_pct:vol.lp_pct,
         ec_stops_wk:vol.ec_stops_wk*mid, ec_pkgs_wk:vol.ec_pkgs_wk*mid
       };
-      const mesoScaled = totalRevenue113(m, scaledVol);
-      const curScaled = totalRevenueCurrent(scaledVol, 113);
+      const mesoScaled = totalRevenueForTerm(m, scaledVol);
+      const curScaled = totalCurrentForTerm(scaledVol);
       if(mesoScaled > curScaled) hi=mid; else lo=mid;
     }
     const breakPct = ((1-lo)*100);
     const dropLabel = breakPct>0 ? `Volume can drop ${breakPct.toFixed(1)}%` : `Already below current`;
 
-    beData.push({key,name:m.name,color:m.color,breakPct:Math.max(0,breakPct),meso113,diff:meso113-current113});
+    beData.push({key,name:m.name,color:m.color,breakPct:Math.max(0,breakPct),mesoTotal,diff:mesoTotal-currentTotal});
 
     html += `<div class="meso-card ${key}">
       <h3>${m.name}</h3>
@@ -558,9 +602,9 @@ function renderBreakeven(){
       <div class="meso-val" style="color:${m.color}">${breakPct.toFixed(1)}%</div>
       <div style="font-size:12px;color:var(--gray);margin-top:4px">${dropLabel} before earning less than current C8882435 rates</div>
       <div style="margin-top:10px">
-        <div class="meso-row"><span class="label">MESO Revenue (113 wk)</span><span class="val">${fm(Math.round(meso113))}</span></div>
-        <div class="meso-row"><span class="label">Current Revenue (113 wk)</span><span class="val">${fm(Math.round(current113))}</span></div>
-        <div class="meso-row"><span class="label">Surplus</span><span class="val" style="color:${meso113>=current113?'var(--green)':'var(--red)'}">${fm(Math.round(meso113-current113))}</span></div>
+        <div class="meso-row"><span class="label">MESO Revenue (${lbl})</span><span class="val">${fm(Math.round(mesoTotal))}</span></div>
+        <div class="meso-row"><span class="label">Current Revenue (${lbl})</span><span class="val">${fm(Math.round(currentTotal))}</span></div>
+        <div class="meso-row"><span class="label">Surplus</span><span class="val" style="color:${mesoTotal>=currentTotal?'var(--green)':'var(--red)'}">${fm(Math.round(mesoTotal-currentTotal))}</span></div>
       </div>
     </div>`;
   });
@@ -583,28 +627,37 @@ function renderBreakeven(){
 // ===== SECTION 5: CONTRACT PERIOD IMPACT =====
 function renderPeriodImpact(){
   const vol = ACTUAL_VOL;
+  const wks = termWeeks();
+  const lbl = termLabel();
   const del_pkgs_wk = vol.del_pkgs_wk;
   const lp_pkgs_wk = del_pkgs_wk * (vol.lp_pct/100);
   const all_stops_wk = vol.nec_stops_wk + vol.ec_stops_wk;
 
+  // Build thead dynamically
+  document.getElementById('periodHead').innerHTML =
+    `<tr><th>Rate Component</th><th class="num">Current Rate</th>
+    <th class="num" style="color:var(--m1)">MESO 1</th><th class="num" style="color:var(--m1)">${lbl} Impact</th>
+    <th class="num" style="color:var(--m2)">MESO 2</th><th class="num" style="color:var(--m2)">${lbl} Impact</th>
+    <th class="num" style="color:var(--m3)">MESO 3</th><th class="num" style="color:var(--m3)">${lbl} Impact</th></tr>`;
+
   const components = [
-    {name:'Service Charge',unit:'/wk',cur:CURRENT.service,m1:MESOS.m1.y1.service,m2:MESOS.m2.y1.service,m3:MESOS.m3.y1.service,mult:1,weeks:113},
-    {name:'Stop Charge',unit:'/stop',cur:CURRENT.stop,m1:MESOS.m1.y1.stop,m2:MESOS.m2.y1.stop,m3:MESOS.m3.y1.stop,mult:vol.nec_stops_wk,weeks:113},
-    {name:'Fuel Surcharge',unit:'/stop',cur:CURRENT.fuel,m1:MESOS.m1.y1.fuel,m2:MESOS.m2.y1.fuel,m3:MESOS.m3.y1.fuel,mult:all_stops_wk,weeks:113},
-    {name:'Package Charge',unit:'/pkg',cur:CURRENT.package,m1:MESOS.m1.y1.package,m2:MESOS.m2.y1.package,m3:MESOS.m3.y1.package,mult:vol.nec_pkgs_wk,weeks:113},
-    {name:'LP Mix Charge',unit:'/LP pkg',cur:CURRENT.lp_mix,m1:MESOS.m1.y1.lp_mix,m2:MESOS.m2.y1.lp_mix,m3:MESOS.m3.y1.lp_mix,mult:lp_pkgs_wk,weeks:113},
-    {name:'E-Com Stop',unit:'/stop',cur:CURRENT.ecom_stop,m1:MESOS.m1.y1.ecom_stop,m2:MESOS.m2.y1.ecom_stop,m3:MESOS.m3.y1.ecom_stop,mult:vol.ec_stops_wk,weeks:113},
-    {name:'E-Com Package',unit:'/pkg',cur:CURRENT.ecom_pkg,m1:MESOS.m1.y1.ecom_pkg,m2:MESOS.m2.y1.ecom_pkg,m3:MESOS.m3.y1.ecom_pkg,mult:vol.ec_pkgs_wk,weeks:113},
-    {name:'Vehicle Brand',unit:'/veh/wk',cur:CURRENT.vehicle,m1:MESOS.m1.y1.vehicle,m2:MESOS.m2.y1.vehicle,m3:MESOS.m3.y1.vehicle,mult:MESOS.m1.y1.vehicles,weeks:113,note:'15 vehicles (was 13)'}
+    {name:'Service Charge',unit:'/wk',cur:CURRENT.service,m1:MESOS.m1.y1.service,m2:MESOS.m2.y1.service,m3:MESOS.m3.y1.service,mult:1},
+    {name:'Stop Charge',unit:'/stop',cur:CURRENT.stop,m1:MESOS.m1.y1.stop,m2:MESOS.m2.y1.stop,m3:MESOS.m3.y1.stop,mult:vol.nec_stops_wk},
+    {name:'Fuel Surcharge',unit:'/stop',cur:CURRENT.fuel,m1:MESOS.m1.y1.fuel,m2:MESOS.m2.y1.fuel,m3:MESOS.m3.y1.fuel,mult:all_stops_wk},
+    {name:'Package Charge',unit:'/pkg',cur:CURRENT.package,m1:MESOS.m1.y1.package,m2:MESOS.m2.y1.package,m3:MESOS.m3.y1.package,mult:vol.nec_pkgs_wk},
+    {name:'LP Mix Charge',unit:'/LP pkg',cur:CURRENT.lp_mix,m1:MESOS.m1.y1.lp_mix,m2:MESOS.m2.y1.lp_mix,m3:MESOS.m3.y1.lp_mix,mult:lp_pkgs_wk},
+    {name:'E-Com Stop',unit:'/stop',cur:CURRENT.ecom_stop,m1:MESOS.m1.y1.ecom_stop,m2:MESOS.m2.y1.ecom_stop,m3:MESOS.m3.y1.ecom_stop,mult:vol.ec_stops_wk},
+    {name:'E-Com Package',unit:'/pkg',cur:CURRENT.ecom_pkg,m1:MESOS.m1.y1.ecom_pkg,m2:MESOS.m2.y1.ecom_pkg,m3:MESOS.m3.y1.ecom_pkg,mult:vol.ec_pkgs_wk},
+    {name:'Vehicle Brand',unit:'/veh/wk',cur:CURRENT.vehicle,m1:MESOS.m1.y1.vehicle,m2:MESOS.m2.y1.vehicle,m3:MESOS.m3.y1.vehicle,mult:MESOS.m1.y1.vehicles,note:'15 vehicles (was 13)'}
   ];
 
   let html = '';
   let totals = {m1:0,m2:0,m3:0};
 
   components.forEach(c=>{
-    const d1 = (c.m1 - c.cur) * c.mult * c.weeks;
-    const d2 = (c.m2 - c.cur) * c.mult * c.weeks;
-    const d3 = (c.m3 - c.cur) * c.mult * c.weeks;
+    const d1 = (c.m1 - c.cur) * c.mult * wks;
+    const d2 = (c.m2 - c.cur) * c.mult * wks;
+    const d3 = (c.m3 - c.cur) * c.mult * wks;
     totals.m1 += d1; totals.m2 += d2; totals.m3 += d3;
 
     const fmDelta = v => {
@@ -629,7 +682,7 @@ function renderPeriodImpact(){
   // Totals row
   const fmT = v => `<strong class="${v>=0?'positive':'negative'}">${v>=0?'+':''}${fm(Math.round(v))}</strong>`;
   html += `<tr style="border-top:3px solid var(--dark);background:#f8fafc">
-    <td><strong>TOTAL 113-Week Impact</strong></td>
+    <td><strong>TOTAL ${lbl} Impact</strong></td>
     <td></td>
     <td></td><td class="num">${fmT(totals.m1)}</td>
     <td></td><td class="num">${fmT(totals.m2)}</td>
