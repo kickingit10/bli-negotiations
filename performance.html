@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C8882435 Performance vs Projected</title>
+<title>C8882435 Negotiation Performance</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
 <style>
-:root{--blue:#2563eb;--purple:#7c3aed;--green:#059669;--orange:#d97706;--red:#dc2626;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--meso1:#3b82f6;--meso2:#8b5cf6;--meso3:#f59e0b;--actual:#059669}
+:root{--blue:#2563eb;--purple:#7c3aed;--green:#059669;--orange:#d97706;--red:#dc2626;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--meso1:#3b82f6;--meso3:#f59e0b;--actual:#059669;--fa:#8b5cf6}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark)}
 .dash{max-width:1400px;margin:0 auto;padding:20px}
@@ -16,12 +16,23 @@ header .sub{font-size:12px;color:var(--gray);margin-top:2px}
 .back-link{font-size:13px;color:var(--blue);text-decoration:none;display:inline-block;margin-bottom:12px}
 .back-link:hover{text-decoration:underline}
 
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.kpi{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.toggle-row{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.toggle-btn{padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray);transition:all .2s}
+.toggle-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.toggle-btn:hover:not(.active){background:#f1f5f9}
+.toggle-hint{font-size:11px;color:var(--gray);font-style:italic}
+
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative}
 .kpi .lbl{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .kpi .val{font-size:22px;font-weight:700;margin:4px 0}
 .kpi .chg{font-size:12px;font-weight:600}
 .kpi .up{color:var(--green)}.kpi .down{color:var(--red)}.kpi .flat{color:var(--gray)}
+.kpi .tip{display:none;position:absolute;top:100%;left:0;right:0;z-index:10;background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.12);font-size:12px;line-height:1.6}
+.kpi:hover .tip{display:block}
+.kpi .tip h4{font-size:12px;margin-bottom:6px;color:var(--dark)}
+.kpi .tip .tip-row{display:flex;justify-content:space-between;gap:8px}
+.kpi .tip .tip-label{color:var(--gray)}.kpi .tip .tip-val{font-weight:600;font-variant-numeric:tabular-nums}
 
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
@@ -40,6 +51,14 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 tr:hover{background:#f8fafc}
 .highlight{font-weight:700}
 .positive{color:var(--green)}.negative{color:var(--red)}
+.best-cell{background:#ecfdf5;font-weight:700}
+.worst-cell{background:#fef2f2}
+
+.rate-table{margin-bottom:16px}
+.rate-table th{text-align:right}
+.rate-table th:first-child{text-align:left}
+.rate-table td{text-align:right}
+.rate-table td:first-child{text-align:left;font-weight:600}
 
 .insight-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px;margin-bottom:16px;font-size:13px;line-height:1.7;color:#1e40af}
 .insight-box strong{color:#1e3a8a}
@@ -55,21 +74,34 @@ tr:hover{background:#f8fafc}
 <div class="dash">
 <a href="index.html" class="back-link">&larr; Back to Negotiations Dashboard</a>
 <header>
-  <h1>C8882435 Contract Performance</h1>
-  <div class="sub">Actual weekly settlement vs MESO projected revenue &middot; <span id="dateRange"></span></div>
+  <h1>C8882435 Negotiation Performance</h1>
+  <div class="sub">What Scott's negotiation was worth: Actual settlement vs what the original MESO offers would have paid &middot; <span id="dateRange"></span></div>
 </header>
+
+<div class="toggle-row">
+  <button class="toggle-btn active" onclick="setView('actual')">48 Weeks (Actual Data)</button>
+  <button class="toggle-btn" onclick="setView('annual')">52 Weeks (Annualized)</button>
+  <span class="toggle-hint" id="toggleHint"></span>
+</div>
 
 <div id="insightBox" class="insight-box"></div>
 <div id="kpiRow" class="kpi-row"></div>
 
+<!-- Rate Comparison Table -->
+<div class="card card-full" style="margin-bottom:16px">
+  <h3>Rate Comparison: Final Approval vs Original MESO Offers (Neg Req 1000046034 &rarr; C8882435)</h3>
+  <div style="overflow-x:auto">
+    <table class="rate-table" id="rateTable"></table>
+  </div>
+</div>
+
 <div class="grid-2">
   <div class="card card-full">
-    <h3>Weekly Revenue: Actual vs Projected</h3>
+    <h3>Weekly Revenue: Actual vs What MESOs Would Have Paid</h3>
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--actual)"></div> Actual (C8882435)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--meso1)"></div> MESO 1 Projected</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--meso2)"></div> MESO 2 Projected</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--meso3)"></div> MESO 3 Projected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--actual)"></div> Actual (Final Approval Rates)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meso1)"></div> Old MESO 1 Projected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--meso3)"></div> Old MESO 3 Projected</div>
     </div>
     <canvas id="cTimeline"></canvas>
   </div>
@@ -77,39 +109,44 @@ tr:hover{background:#f8fafc}
 
 <div class="grid-2">
   <div class="card">
-    <h3>Cumulative Revenue Gap</h3>
+    <h3>Cumulative Savings vs MESOs</h3>
     <canvas id="cCumulative"></canvas>
   </div>
   <div class="card">
-    <h3>Average Weekly Difference</h3>
-    <canvas id="cAvgDiff"></canvas>
+    <h3>Total Savings by MESO</h3>
+    <canvas id="cSavingsBar"></canvas>
   </div>
 </div>
 
 <div class="grid-2">
   <div class="card">
-    <h3>Revenue Component Breakdown (Avg/Week)</h3>
+    <h3>Revenue by Component (Avg/Week)</h3>
     <canvas id="cComponents"></canvas>
   </div>
   <div class="card">
-    <h3>Actual vs Best MESO by Week</h3>
-    <canvas id="cBestMeso"></canvas>
+    <h3>Per-Rate Advantage: Final Approval vs MESOs</h3>
+    <canvas id="cRateAdv"></canvas>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card card-full">
+    <h3>Weekly Savings vs Best MESO</h3>
+    <canvas id="cWeeklySavings"></canvas>
   </div>
 </div>
 
 <div class="card card-full" style="margin-bottom:16px">
-  <h3>Week-by-Week Comparison</h3>
+  <h3 id="tableTitle">Week-by-Week Comparison</h3>
   <div style="overflow-x:auto">
     <table id="weeklyTable">
       <thead>
         <tr>
           <th>Week Ending</th>
-          <th style="text-align:right">Actual</th>
-          <th style="text-align:right">MESO 1</th>
+          <th style="text-align:right">Actual Net</th>
+          <th style="text-align:right">Old MESO 1</th>
           <th style="text-align:right">vs MESO 1</th>
-          <th style="text-align:right">MESO 2</th>
-          <th style="text-align:right">vs MESO 2</th>
-          <th style="text-align:right">MESO 3</th>
+          <th style="text-align:right">Old MESO 3</th>
           <th style="text-align:right">vs MESO 3</th>
         </tr>
       </thead>
@@ -122,113 +159,234 @@ tr:hover{background:#f8fafc}
 </div>
 
 <script>
+/* ── Formatting helpers ── */
 const fm=v=>'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 const fmd=v=>(v>=0?'+':'-')+fm(v);
+const fmr=v=>'$'+v.toFixed(2);
 
-let NEG, OPS, charts={};
+/* ── Old C8882435 Negotiation Rates (Neg Req 1000046034) ──
+   These are the MESO offers FedEx originally presented for the C8882435 contract.
+   Scott negotiated to the Final Approval rates instead. MESO 2 was an empty placeholder. */
 
+const FA_RATES={service:10312,stop:2.26,fuel:0.11,package:0.18,lp_mix:1.00,ecom_stop:1.50,ecom_pkg:0.18,apparel:200,vehicle:40,vehicles:13};
+const OLD_MESO1={service:10270,stop:1.93,fuel:0.15,package:0.10,lp_mix:1.00,ecom_stop:1.35,ecom_pkg:0.10,apparel:160,vehicle:25,vehicles:13};
+const OLD_MESO3={service:7199,stop:2.29,fuel:0.15,package:0.10,lp_mix:1.50,ecom_stop:1.60,ecom_pkg:0.10,apparel:160,vehicle:25,vehicles:13};
+
+/* ── Project a week's volume through any rate set ── */
+function projectWeek(w,rates){
+  const nonEcomStops=w.ts-(w.es||0);
+  const nonEcomPkgs=(w.pp||0)+(w.dp||0);
+  const ecomStops=w.es||0;
+  const ecomPkgs=w.ep||0;
+  const totalPkgs=nonEcomPkgs+ecomPkgs;
+  const lpPct=(w.desig||0)/100;
+  const lpPkgs=totalPkgs*lpPct;
+
+  const svc=rates.service;
+  const stopRev=nonEcomStops*rates.stop;
+  const fuelRev=w.ts*rates.fuel;
+  const pkgRev=nonEcomPkgs*rates.package;
+  const lpRev=lpPkgs*rates.lp_mix;
+  const ecomStopRev=ecomStops*rates.ecom_stop;
+  const ecomPkgRev=ecomPkgs*rates.ecom_pkg;
+  const apparel=rates.apparel;
+  const vehicleRev=rates.vehicle*rates.vehicles;
+
+  return {
+    total:svc+stopRev+fuelRev+pkgRev+lpRev+ecomStopRev+ecomPkgRev+apparel+vehicleRev,
+    svc, stopRev, fuelRev, pkgRev, lpRev, ecomStopRev, ecomPkgRev, apparel, vehicleRev
+  };
+}
+
+/* ── State ── */
+let OPS=[], charts={}, viewMode='actual';
+
+function setView(mode){
+  viewMode=mode;
+  document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.toggle-btn[onclick="setView('${mode}')"]`).classList.add('active');
+  render();
+}
+
+/* ── Init ── */
 async function init(){
-  const [negR, opsR]=await Promise.all([fetch('data.json'),fetch('https://bli-dashboard.vercel.app/data.json')]);
-  NEG=await negR.json();
-  OPS=await opsR.json();
+  const r=await fetch('https://bli-dashboard.vercel.app/data.json');
+  const json=await r.json();
+  OPS=json.weeks||json;
   render();
 }
 
 function render(){
-  const actuals={};
-  OPS.weeks.forEach(w=>{actuals[w.we]=w});
-
-  // Build comparison data for overlapping weeks
-  const weeks=[];
-  NEG.projections.meso_1.weekly.forEach((m1,i)=>{
-    const we=m1.week_ending;
-    if(!actuals[we]) return;
-    const m2=NEG.projections.meso_2.weekly[i];
-    const m3=NEG.projections.meso_3.weekly[i];
-    weeks.push({
-      we,
-      actual:actuals[we].net,
-      meso1:m1.total,
-      meso2:m2.total,
-      meso3:m3.total,
-      m1_detail:m1,
-      m2_detail:m2,
-      m3_detail:m3,
-      actual_detail:actuals[we]
-    });
+  /* ── Build week-by-week comparison ── */
+  const weeks=OPS.map(w=>{
+    const m1=projectWeek(w,OLD_MESO1);
+    const m3=projectWeek(w,OLD_MESO3);
+    return {we:w.we, actual:w.net, meso1:m1.total, meso3:m3.total, m1_detail:m1, m3_detail:m3, raw:w};
   });
+  const n=weeks.length;
 
-  document.getElementById('dateRange').textContent=weeks[0].we+' — '+weeks[weeks.length-1].we+' ('+weeks.length+' weeks with actual data)';
+  /* ── Seasonality-normalized annualization ──
+     Data covers 48 weeks (Apr 2025 – Feb 2026). For 52-week view, we estimate
+     4 missing March weeks using averages from adjacent non-peak months (Jan, Feb, Apr)
+     rather than a naive 52/48 multiplier, because Nov-Dec peak season would skew results. */
+  let displayWeeks=weeks;
+  let estWeeks=0;
+  let estActual=0, estM1=0, estM3=0;
 
-  // Compute summary stats
-  const totalActual=weeks.reduce((s,w)=>s+w.actual,0);
-  const totalM1=weeks.reduce((s,w)=>s+w.meso1,0);
-  const totalM2=weeks.reduce((s,w)=>s+w.meso2,0);
-  const totalM3=weeks.reduce((s,w)=>s+w.meso3,0);
-  const avgActual=totalActual/weeks.length;
-  const avgM1=totalM1/weeks.length;
-  const avgM2=totalM2/weeks.length;
-  const avgM3=totalM3/weeks.length;
-  const bestMesoTotal=Math.max(totalM1,totalM2,totalM3);
-  const bestMesoName=bestMesoTotal===totalM1?'MESO 1':bestMesoTotal===totalM2?'MESO 2':'MESO 3';
+  if(viewMode==='annual'){
+    // Gather Jan (1), Feb (2), Apr (4) weeks as the basis for March estimates
+    const adjMonths=weeks.filter(w=>{
+      const m=parseInt(w.we.split('/')[0]);
+      return m===1||m===2||m===4;
+    });
+    if(adjMonths.length>0){
+      estWeeks=4;
+      estActual=adjMonths.reduce((s,w)=>s+w.actual,0)/adjMonths.length;
+      estM1=adjMonths.reduce((s,w)=>s+w.meso1,0)/adjMonths.length;
+      estM3=adjMonths.reduce((s,w)=>s+w.meso3,0)/adjMonths.length;
+    }
+  }
 
-  // Insight box
-  const diffVsBest=totalActual-bestMesoTotal;
-  const pctDiff=((diffVsBest/bestMesoTotal)*100).toFixed(1);
-  const weeksActualWins=weeks.filter(w=>w.actual>=Math.max(w.meso1,w.meso2,w.meso3)).length;
+  const totalN=n+estWeeks;
+  const totalActual=weeks.reduce((s,w)=>s+w.actual,0)+estActual*estWeeks;
+  const totalM1=weeks.reduce((s,w)=>s+w.meso1,0)+estM1*estWeeks;
+  const totalM3=weeks.reduce((s,w)=>s+w.meso3,0)+estM3*estWeeks;
+  const avgActual=totalActual/totalN;
+  const avgM1=totalM1/totalN;
+  const avgM3=totalM3/totalN;
+
+  const diffM1=totalActual-totalM1;
+  const diffM3=totalActual-totalM3;
+  const pctM1=((diffM1/totalM1)*100).toFixed(1);
+  const pctM3=((diffM3/totalM3)*100).toFixed(1);
+
+  const weeksWinM1=weeks.filter(w=>w.actual>w.meso1).length;
+  const weeksWinM3=weeks.filter(w=>w.actual>w.meso3).length;
+  const weeksWinBoth=weeks.filter(w=>w.actual>Math.max(w.meso1,w.meso3)).length;
+
+  /* ── Header ── */
+  const suffix=viewMode==='annual'?' (includes 4 estimated March weeks)':'';
+  document.getElementById('dateRange').textContent=weeks[0].we+' \u2014 '+weeks[n-1].we+' ('+n+' weeks actual'+suffix+')';
+  document.getElementById('toggleHint').textContent=viewMode==='annual'
+    ?'4 estimated March weeks based on Jan+Feb+Apr averages (non-peak normalization)'
+    :'Toggle to see seasonality-normalized 52-week annualized figures';
+
+  /* ── Insight Box ── */
+  const bestSaving=Math.max(diffM1,diffM3);
+  const bestLabel=diffM1>=diffM3?'Old MESO 1':'Old MESO 3';
   document.getElementById('insightBox').innerHTML=
-    `<strong>Key Insight:</strong> Over ${weeks.length} weeks of actual data, C8882435 generated <strong>${fm(totalActual)}</strong> in net settlement — `+
-    (diffVsBest>0
-      ?`<strong>${fm(diffVsBest)} more</strong> (+${pctDiff}%) than the best MESO option (${bestMesoName} at ${fm(bestMesoTotal)}). The current contract outperformed projections in <strong>${weeksActualWins} of ${weeks.length}</strong> weeks.`
-      :`<strong>${fm(Math.abs(diffVsBest))} less</strong> (${pctDiff}%) than the best MESO option (${bestMesoName} at ${fm(bestMesoTotal)}). The current contract underperformed projections in <strong>${weeks.length-weeksActualWins} of ${weeks.length}</strong> weeks.`);
+    `<strong>Negotiation Value:</strong> Over ${totalN} weeks${viewMode==='annual'?' (annualized)':''}, the Final Approval rates generated <strong>${fm(totalActual)}</strong> in net settlement \u2014 `+
+    `<strong>${fm(bestSaving)} more</strong> than ${bestLabel} would have paid (${fm(bestSaving===diffM1?totalM1:totalM3)}). `+
+    `The negotiated rates outperformed both original MESOs in <strong>${weeksWinBoth} of ${n}</strong> actual weeks. `+
+    `Average weekly advantage: <strong>${fmd(diffM1/totalN)}/wk</strong> vs Old MESO 1, <strong>${fmd(diffM3/totalN)}/wk</strong> vs Old MESO 3.`;
 
-  // KPI cards
+  /* ── KPI Cards ── */
   document.getElementById('kpiRow').innerHTML=[
-    {l:'Actual Total',v:fm(totalActual),sub:fm(avgActual)+'/wk avg'},
-    {l:'vs '+bestMesoName,v:fmd(diffVsBest),sub:pctDiff+'% '+(diffVsBest>=0?'above':'below'),cls:diffVsBest>=0?'up':'down'},
-    {l:'Weeks Outperforming',v:weeksActualWins+'/'+weeks.length,sub:Math.round(weeksActualWins/weeks.length*100)+'% of weeks'},
-    {l:'Avg Weekly Advantage',v:fmd(diffVsBest/weeks.length),sub:'per week vs '+bestMesoName,cls:diffVsBest>=0?'up':'down'}
-  ].map(k=>`<div class="kpi"><div class="lbl">${k.l}</div><div class="val ${k.cls||''}">${k.v}</div><div class="chg flat">${k.sub}</div></div>`).join('');
+    {l:'Net Settlement'+(viewMode==='annual'?' (52wk)':''),v:fm(totalActual),
+     sub:fm(avgActual)+'/wk avg',cls:'flat',
+     tip:`<h4>Settlement (${totalN} weeks)</h4>
+       <div class="tip-row"><span class="tip-label">Total</span><span class="tip-val">${fm(totalActual)}</span></div>
+       <div class="tip-row"><span class="tip-label">Avg/Week</span><span class="tip-val">${fm(avgActual)}</span></div>
+       ${viewMode==='annual'?'<div class="tip-row"><span class="tip-label">Est. March (4 wks)</span><span class="tip-val">'+fm(estActual*estWeeks)+'</span></div>':''}`},
+    {l:'vs Old MESO 1',v:fmd(diffM1),sub:'+'+pctM1+'% above',cls:'up',
+     tip:`<h4>Old MESO 1 (Neg Req 1000046034)</h4>
+       <div class="tip-row"><span class="tip-label">MESO 1 Total</span><span class="tip-val">${fm(totalM1)}</span></div>
+       <div class="tip-row"><span class="tip-label">Your Advantage</span><span class="tip-val">${fmd(diffM1)}</span></div>
+       <div class="tip-row"><span class="tip-label">Avg/Week</span><span class="tip-val">${fmd(diffM1/totalN)}</span></div>
+       <div class="tip-row"><span class="tip-label">Weeks Won</span><span class="tip-val">${weeksWinM1}/${n}</span></div>`},
+    {l:'vs Old MESO 3',v:fmd(diffM3),sub:'+'+pctM3+'% above',cls:'up',
+     tip:`<h4>Old MESO 3 (Neg Req 1000046034)</h4>
+       <div class="tip-row"><span class="tip-label">MESO 3 Total</span><span class="tip-val">${fm(totalM3)}</span></div>
+       <div class="tip-row"><span class="tip-label">Your Advantage</span><span class="tip-val">${fmd(diffM3)}</span></div>
+       <div class="tip-row"><span class="tip-label">Avg/Week</span><span class="tip-val">${fmd(diffM3/totalN)}</span></div>
+       <div class="tip-row"><span class="tip-label">Weeks Won</span><span class="tip-val">${weeksWinM3}/${n}</span></div>`},
+    {l:'Weeks Outperforming',v:weeksWinBoth+'/'+n,
+     sub:Math.round(weeksWinBoth/n*100)+'% of weeks',cls:'flat',
+     tip:`<h4>Weeks Outperforming Both MESOs</h4>
+       <div class="tip-row"><span class="tip-label">vs Old MESO 1</span><span class="tip-val">${weeksWinM1}/${n} (${Math.round(weeksWinM1/n*100)}%)</span></div>
+       <div class="tip-row"><span class="tip-label">vs Old MESO 3</span><span class="tip-val">${weeksWinM3}/${n} (${Math.round(weeksWinM3/n*100)}%)</span></div>
+       <div class="tip-row"><span class="tip-label">vs Both</span><span class="tip-val">${weeksWinBoth}/${n} (${Math.round(weeksWinBoth/n*100)}%)</span></div>`},
+    {l:'Avg Weekly Savings',v:fmd((diffM1+diffM3)/(2*totalN)),
+     sub:'avg vs both MESOs',cls:'up',
+     tip:`<h4>Average Weekly Advantage</h4>
+       <div class="tip-row"><span class="tip-label">vs Old MESO 1</span><span class="tip-val">${fmd(diffM1/totalN)}/wk</span></div>
+       <div class="tip-row"><span class="tip-label">vs Old MESO 3</span><span class="tip-val">${fmd(diffM3/totalN)}/wk</span></div>
+       <div class="tip-row"><span class="tip-label">Combined Avg</span><span class="tip-val">${fmd((diffM1+diffM3)/(2*totalN))}/wk</span></div>`}
+  ].map(k=>`<div class="kpi"><div class="lbl">${k.l}</div><div class="val ${k.cls||''}">${k.v}</div><div class="chg ${k.cls||'flat'}">${k.sub}</div>${k.tip?'<div class="tip">'+k.tip+'</div>':''}</div>`).join('');
 
-  // Charts
+  /* ── Rate Comparison Table ── */
+  const rateRows=[
+    {label:'Service (weekly)',fa:fm(FA_RATES.service),m1:fm(OLD_MESO1.service),m3:fm(OLD_MESO3.service),
+     best:FA_RATES.service>=OLD_MESO1.service&&FA_RATES.service>=OLD_MESO3.service?'fa':OLD_MESO1.service>=OLD_MESO3.service?'m1':'m3'},
+    {label:'Stop',fa:fmr(FA_RATES.stop),m1:fmr(OLD_MESO1.stop),m3:fmr(OLD_MESO3.stop),
+     best:FA_RATES.stop>=OLD_MESO1.stop&&FA_RATES.stop>=OLD_MESO3.stop?'fa':OLD_MESO1.stop>=OLD_MESO3.stop?'m1':'m3'},
+    {label:'Fuel Surcharge',fa:fmr(FA_RATES.fuel),m1:fmr(OLD_MESO1.fuel),m3:fmr(OLD_MESO3.fuel),
+     best:'fa',note:'Lower fuel rate benefits FedEx, but higher variable rates compensate'},
+    {label:'Package',fa:fmr(FA_RATES.package),m1:fmr(OLD_MESO1.package),m3:fmr(OLD_MESO3.package),
+     best:FA_RATES.package>=OLD_MESO1.package&&FA_RATES.package>=OLD_MESO3.package?'fa':OLD_MESO1.package>=OLD_MESO3.package?'m1':'m3'},
+    {label:'LP Mix',fa:fmr(FA_RATES.lp_mix),m1:fmr(OLD_MESO1.lp_mix),m3:fmr(OLD_MESO3.lp_mix),
+     best:FA_RATES.lp_mix>=OLD_MESO1.lp_mix&&FA_RATES.lp_mix>=OLD_MESO3.lp_mix?'fa':OLD_MESO1.lp_mix>=OLD_MESO3.lp_mix?'m1':'m3'},
+    {label:'E-Com Stop',fa:fmr(FA_RATES.ecom_stop),m1:fmr(OLD_MESO1.ecom_stop),m3:fmr(OLD_MESO3.ecom_stop),
+     best:FA_RATES.ecom_stop>=OLD_MESO1.ecom_stop&&FA_RATES.ecom_stop>=OLD_MESO3.ecom_stop?'fa':OLD_MESO1.ecom_stop>=OLD_MESO3.ecom_stop?'m1':'m3'},
+    {label:'E-Com Package',fa:fmr(FA_RATES.ecom_pkg),m1:fmr(OLD_MESO1.ecom_pkg),m3:fmr(OLD_MESO3.ecom_pkg),
+     best:FA_RATES.ecom_pkg>=OLD_MESO1.ecom_pkg&&FA_RATES.ecom_pkg>=OLD_MESO3.ecom_pkg?'fa':OLD_MESO1.ecom_pkg>=OLD_MESO3.ecom_pkg?'m1':'m3'},
+    {label:'Apparel (weekly)',fa:fm(FA_RATES.apparel),m1:fm(OLD_MESO1.apparel),m3:fm(OLD_MESO3.apparel),
+     best:FA_RATES.apparel>=OLD_MESO1.apparel&&FA_RATES.apparel>=OLD_MESO3.apparel?'fa':OLD_MESO1.apparel>=OLD_MESO3.apparel?'m1':'m3'},
+    {label:'Vehicle (per veh/wk)',fa:fm(FA_RATES.vehicle),m1:fm(OLD_MESO1.vehicle),m3:fm(OLD_MESO3.vehicle),
+     best:FA_RATES.vehicle>=OLD_MESO1.vehicle&&FA_RATES.vehicle>=OLD_MESO3.vehicle?'fa':OLD_MESO1.vehicle>=OLD_MESO3.vehicle?'m1':'m3'},
+    {label:'Vehicles',fa:FA_RATES.vehicles,m1:OLD_MESO1.vehicles,m3:OLD_MESO3.vehicles,best:''}
+  ];
+  document.getElementById('rateTable').innerHTML=`
+    <thead><tr><th style="text-align:left">Rate Component</th><th>Final Approval<br><span style="font-weight:400;font-size:10px;text-transform:none">(What you negotiated)</span></th><th>Old MESO 1<br><span style="font-weight:400;font-size:10px;text-transform:none">(Initial offer)</span></th><th>Old MESO 3<br><span style="font-weight:400;font-size:10px;text-transform:none">(Counter offer)</span></th></tr></thead>
+    <tbody>${rateRows.map(r=>`<tr><td>${r.label}</td><td class="num ${r.best==='fa'?'best-cell':''}">${r.fa}</td><td class="num ${r.best==='m1'?'best-cell':''}">${r.m1}</td><td class="num ${r.best==='m3'?'best-cell':''}">${r.m3}</td></tr>`).join('')}</tbody>`;
+
+  /* ── Destroy old charts ── */
   Object.values(charts).forEach(c=>{if(c)c.destroy()});
   charts={};
 
   const labels=weeks.map(w=>w.we);
 
-  // Timeline chart
+  /* ── Timeline Chart ── */
   charts.timeline=new Chart(document.getElementById('cTimeline'),{
     type:'line',
     data:{
       labels,
       datasets:[
-        {label:'Actual',data:weeks.map(w=>w.actual),borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.1)',borderWidth:3,fill:true,tension:0.3,pointRadius:4},
-        {label:'MESO 1',data:weeks.map(w=>w.meso1),borderColor:'#3b82f6',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2},
-        {label:'MESO 2',data:weeks.map(w=>w.meso2),borderColor:'#8b5cf6',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2},
-        {label:'MESO 3',data:weeks.map(w=>w.meso3),borderColor:'#f59e0b',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2}
+        {label:'Actual (Final Approval)',data:weeks.map(w=>w.actual),borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.1)',borderWidth:3,fill:true,tension:0.3,pointRadius:3},
+        {label:'Old MESO 1 Projected',data:weeks.map(w=>w.meso1),borderColor:'#3b82f6',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2},
+        {label:'Old MESO 3 Projected',data:weeks.map(w=>w.meso3),borderColor:'#f59e0b',borderWidth:2,borderDash:[6,3],tension:0.3,pointRadius:2}
       ]
     },
     options:{
       responsive:true,
-      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>' '+ctx.dataset.label+': $'+ctx.raw.toLocaleString()}}},
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>{
+        const v='$'+ctx.raw.toLocaleString();
+        if(ctx.datasetIndex===0){
+          const w=weeks[ctx.dataIndex];
+          const savM1=w.actual-w.meso1;
+          const savM3=w.actual-w.meso3;
+          return ' '+ctx.dataset.label+': '+v+' ('+fmd(savM1)+' vs M1, '+fmd(savM3)+' vs M3)';
+        }
+        return ' '+ctx.dataset.label+': '+v;
+      }}}},
       scales:{y:{ticks:{callback:v=>'$'+v.toLocaleString()},grid:{color:'#f1f5f9'}},x:{ticks:{maxRotation:45,font:{size:10}},grid:{display:false}}}
     }
   });
 
-  // Cumulative gap chart
-  let cumActual=0,cumM1=0,cumM2=0,cumM3=0;
+  /* ── Cumulative Savings Chart ── */
+  let cumM1=0,cumM3=0;
   const cumData=weeks.map(w=>{
-    cumActual+=w.actual;cumM1+=w.meso1;cumM2+=w.meso2;cumM3+=w.meso3;
-    return{cumActual,gapM1:cumActual-cumM1,gapM2:cumActual-cumM2,gapM3:cumActual-cumM3};
+    cumM1+=w.actual-w.meso1;
+    cumM3+=w.actual-w.meso3;
+    return{cumM1,cumM3};
   });
   charts.cumulative=new Chart(document.getElementById('cCumulative'),{
     type:'line',
     data:{
       labels,
       datasets:[
-        {label:'vs MESO 1',data:cumData.map(d=>d.gapM1),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.1)',borderWidth:2,fill:true,tension:0.3},
-        {label:'vs MESO 2',data:cumData.map(d=>d.gapM2),borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',borderWidth:2,fill:true,tension:0.3},
-        {label:'vs MESO 3',data:cumData.map(d=>d.gapM3),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.1)',borderWidth:2,fill:true,tension:0.3}
+        {label:'vs Old MESO 1',data:cumData.map(d=>d.cumM1),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.1)',borderWidth:2,fill:true,tension:0.3},
+        {label:'vs Old MESO 3',data:cumData.map(d=>d.cumM3),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.1)',borderWidth:2,fill:true,tension:0.3}
       ]
     },
     options:{
@@ -238,44 +396,48 @@ function render(){
     }
   });
 
-  // Avg weekly difference bar chart
-  charts.avgDiff=new Chart(document.getElementById('cAvgDiff'),{
+  /* ── Total Savings Bar Chart ── */
+  charts.savingsBar=new Chart(document.getElementById('cSavingsBar'),{
     type:'bar',
     data:{
-      labels:['vs MESO 1','vs MESO 2','vs MESO 3'],
+      labels:['vs Old MESO 1','vs Old MESO 3'],
       datasets:[{
-        data:[avgActual-avgM1,avgActual-avgM2,avgActual-avgM3],
-        backgroundColor:[(avgActual-avgM1)>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)',(avgActual-avgM2)>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)',(avgActual-avgM3)>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)'],
-        borderRadius:6
+        label:'Total Savings',
+        data:[diffM1,diffM3],
+        backgroundColor:['rgba(59,130,246,0.7)','rgba(245,158,11,0.7)'],
+        borderRadius:8
       }]
     },
     options:{
       responsive:true,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmd(ctx.raw)+'/week'}}},
+      indexAxis:'horizontal',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmd(ctx.raw)+(viewMode==='annual'?' (annualized)':'')}}},
       scales:{y:{ticks:{callback:v=>(v>=0?'+':'')+fm(v)},grid:{color:'#f1f5f9'}},x:{grid:{display:false}}}
     }
   });
 
-  // Component breakdown (stacked bar)
-  const componentKeys=['service','stop','package','fuel','lp_mix','ecom_stop','ecom_pkg','apparel','vehicle_brand'];
-  const componentLabels=['Service','Stop','Package','Fuel','LP Mix','E-Com Stop','E-Com Pkg','Apparel','Vehicle'];
-  const componentColors=['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#ef4444','#10b981','#6366f1','#ec4899','#84cc16'];
-  const avgComponents={};
-  ['meso_1','meso_2','meso_3'].forEach(m=>{
-    avgComponents[m]={};
-    componentKeys.forEach(k=>{
-      const matchingWeeks=NEG.projections[m].weekly.filter(w=>actuals[w.week_ending]);
-      avgComponents[m][k]=matchingWeeks.reduce((s,w)=>s+(w[k]||0),0)/matchingWeeks.length;
-    });
+  /* ── Revenue Component Breakdown ── */
+  const compKeys=['svc','stopRev','fuelRev','pkgRev','lpRev','ecomStopRev','ecomPkgRev','apparel','vehicleRev'];
+  const compLabels=['Service','Stop','Fuel','Package','LP Mix','E-Com Stop','E-Com Pkg','Apparel','Vehicle'];
+  const compColors=['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#ef4444','#10b981','#6366f1','#ec4899','#84cc16'];
+
+  const avgComp={fa:{},m1:{},m3:{}};
+  compKeys.forEach(k=>{
+    avgComp.m1[k]=weeks.reduce((s,w)=>s+w.m1_detail[k],0)/n;
+    avgComp.m3[k]=weeks.reduce((s,w)=>s+w.m3_detail[k],0)/n;
+    // For FA, we project actual volumes through FA rates to get component breakdown
+    const faWeeks=weeks.map(w=>projectWeek(w.raw,FA_RATES));
+    avgComp.fa[k]=faWeeks.reduce((s,w)=>s+w[k],0)/n;
   });
+
   charts.components=new Chart(document.getElementById('cComponents'),{
     type:'bar',
     data:{
-      labels:['MESO 1','MESO 2','MESO 3'],
-      datasets:componentKeys.map((k,i)=>({
-        label:componentLabels[i],
-        data:[avgComponents.meso_1[k],avgComponents.meso_2[k],avgComponents.meso_3[k]],
-        backgroundColor:componentColors[i],
+      labels:['Final Approval','Old MESO 1','Old MESO 3'],
+      datasets:compKeys.map((k,i)=>({
+        label:compLabels[i],
+        data:[avgComp.fa[k],avgComp.m1[k],avgComp.m3[k]],
+        backgroundColor:compColors[i],
         borderRadius:2
       }))
     },
@@ -286,54 +448,90 @@ function render(){
     }
   });
 
-  // Best MESO comparison per week
-  const bestMesoData=weeks.map(w=>{
-    const best=Math.max(w.meso1,w.meso2,w.meso3);
-    return w.actual-best;
+  /* ── Per-Rate Advantage Chart ── */
+  const rateAdvData=[
+    {label:'Stop',faVal:FA_RATES.stop,m1Val:OLD_MESO1.stop,m3Val:OLD_MESO3.stop},
+    {label:'Package',faVal:FA_RATES.package,m1Val:OLD_MESO1.package,m3Val:OLD_MESO3.package},
+    {label:'E-Com Stop',faVal:FA_RATES.ecom_stop,m1Val:OLD_MESO1.ecom_stop,m3Val:OLD_MESO3.ecom_stop},
+    {label:'E-Com Pkg',faVal:FA_RATES.ecom_pkg,m1Val:OLD_MESO1.ecom_pkg,m3Val:OLD_MESO3.ecom_pkg}
+  ];
+  charts.rateAdv=new Chart(document.getElementById('cRateAdv'),{
+    type:'bar',
+    data:{
+      labels:rateAdvData.map(r=>r.label),
+      datasets:[
+        {label:'FA vs Old MESO 1',data:rateAdvData.map(r=>r.faVal-r.m1Val),backgroundColor:'rgba(59,130,246,0.7)',borderRadius:4},
+        {label:'FA vs Old MESO 3',data:rateAdvData.map(r=>r.faVal-r.m3Val),backgroundColor:'rgba(245,158,11,0.7)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:11}}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+(ctx.raw>=0?'+':'')+ctx.raw.toFixed(2)+'/unit'}}},
+      scales:{y:{ticks:{callback:v=>(v>=0?'+':'')+v.toFixed(2)},grid:{color:'#f1f5f9'}},x:{grid:{display:false}}}
+    }
   });
-  charts.bestMeso=new Chart(document.getElementById('cBestMeso'),{
+
+  /* ── Weekly Savings vs Best MESO ── */
+  const weeklySavings=weeks.map(w=>w.actual-Math.max(w.meso1,w.meso3));
+  charts.weeklySavings=new Chart(document.getElementById('cWeeklySavings'),{
     type:'bar',
     data:{
       labels,
       datasets:[{
-        label:'Actual vs Best MESO',
-        data:bestMesoData,
-        backgroundColor:bestMesoData.map(v=>v>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)'),
+        label:'Savings vs Best MESO',
+        data:weeklySavings,
+        backgroundColor:weeklySavings.map(v=>v>=0?'rgba(5,150,105,0.7)':'rgba(220,38,38,0.7)'),
         borderRadius:4
       }]
     },
     options:{
       responsive:true,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmd(ctx.raw)+' vs best MESO option'}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmd(ctx.raw)+' vs better MESO that week'}}},
       scales:{y:{ticks:{callback:v=>(v>=0?'+':'')+fm(v)},grid:{color:'#f1f5f9'}},x:{ticks:{maxRotation:45,font:{size:10}},grid:{display:false}}}
     }
   });
 
-  // Weekly comparison table
-  let tBody='',totA=0,totM1t=0,totM2t=0,totM3t=0;
+  /* ── Weekly Comparison Table ── */
+  document.getElementById('tableTitle').textContent='Week-by-Week Comparison'+(viewMode==='annual'?' (48 actual weeks + 4 estimated)':'');
+
+  let tBody='',totA=0,totM1t=0,totM3t=0;
   weeks.forEach(w=>{
-    totA+=w.actual;totM1t+=w.meso1;totM2t+=w.meso2;totM3t+=w.meso3;
-    const d1=w.actual-w.meso1,d2=w.actual-w.meso2,d3=w.actual-w.meso3;
+    totA+=w.actual;totM1t+=w.meso1;totM3t+=w.meso3;
+    const d1=w.actual-w.meso1,d3=w.actual-w.meso3;
     tBody+=`<tr>
       <td>${w.we}</td>
       <td class="num highlight">${fm(w.actual)}</td>
       <td class="num">${fm(w.meso1)}</td>
       <td class="num ${d1>=0?'positive':'negative'}">${fmd(d1)}</td>
-      <td class="num">${fm(w.meso2)}</td>
-      <td class="num ${d2>=0?'positive':'negative'}">${fmd(d2)}</td>
       <td class="num">${fm(w.meso3)}</td>
       <td class="num ${d3>=0?'positive':'negative'}">${fmd(d3)}</td>
     </tr>`;
   });
+
+  // Add estimated March rows if annualized
+  if(viewMode==='annual'&&estWeeks>0){
+    for(let i=1;i<=estWeeks;i++){
+      const estDate='03/'+String(i*7).padStart(2,'0')+'/2026';
+      const d1=estActual-estM1,d3=estActual-estM3;
+      tBody+=`<tr style="background:#f0f7ff;font-style:italic">
+        <td>${estDate} (est.)</td>
+        <td class="num highlight">${fm(estActual)}</td>
+        <td class="num">${fm(estM1)}</td>
+        <td class="num ${d1>=0?'positive':'negative'}">${fmd(d1)}</td>
+        <td class="num">${fm(estM3)}</td>
+        <td class="num ${d3>=0?'positive':'negative'}">${fmd(d3)}</td>
+      </tr>`;
+      totA+=estActual;totM1t+=estM1;totM3t+=estM3;
+    }
+  }
+
   document.getElementById('weeklyBody').innerHTML=tBody;
-  const td1=totA-totM1t,td2=totA-totM2t,td3=totA-totM3t;
+  const td1=totA-totM1t,td3=totA-totM3t;
   document.getElementById('weeklyFoot').innerHTML=`<tr style="font-weight:700;border-top:2px solid var(--dark)">
-    <td>TOTAL</td>
+    <td>TOTAL${viewMode==='annual'?' (52 weeks)':' (48 weeks)'}</td>
     <td class="num">${fm(totA)}</td>
     <td class="num">${fm(totM1t)}</td>
     <td class="num ${td1>=0?'positive':'negative'}">${fmd(td1)}</td>
-    <td class="num">${fm(totM2t)}</td>
-    <td class="num ${td2>=0?'positive':'negative'}">${fmd(td2)}</td>
     <td class="num">${fm(totM3t)}</td>
     <td class="num ${td3>=0?'positive':'negative'}">${fmd(td3)}</td>
   </tr>`;
