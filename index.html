@@ -603,34 +603,39 @@ new Chart(document.getElementById('chart-breakdown'),{
 });
 
 // ── Chart: Fixed vs Variable % ───────────────────────────────────
+const fixPcts = ['meso_1','meso_2','meso_3'].map(mn => {
+  const t = projs[mn].totals;
+  return (t.fixed / t.total * 100);
+});
+const varPcts = ['meso_1','meso_2','meso_3'].map(mn => {
+  const t = projs[mn].totals;
+  return (t.variable / t.total * 100);
+});
 new Chart(document.getElementById('chart-fixvar'),{
-  type:'doughnut',
+  type:'bar',
   data:{
-    labels:['MESO 1 Fixed','MESO 1 Variable','MESO 2 Fixed','MESO 2 Variable','MESO 3 Fixed','MESO 3 Variable'],
+    labels:['MESO 1','MESO 2','MESO 3'],
     datasets:[
-      {label:'MESO 1', data:[projs.meso_1.totals.fixed, projs.meso_1.totals.variable], backgroundColor:['#93c5fd','#3b82f6']},
-      {label:'MESO 2', data:[projs.meso_2.totals.fixed, projs.meso_2.totals.variable], backgroundColor:['#6ee7b7','#10b981']},
-      {label:'MESO 3', data:[projs.meso_3.totals.fixed, projs.meso_3.totals.variable], backgroundColor:['#fcd34d','#f59e0b']},
+      {label:'Fixed (guaranteed)', data:fixPcts, backgroundColor:'#93c5fd', borderColor:'#3b82f6', borderWidth:1},
+      {label:'Variable (volume-based)', data:varPcts, backgroundColor:'#f59e0b', borderColor:'#d97706', borderWidth:1},
     ]
   },
   options:{
+    indexAxis:'y',
     responsive:true, maintainAspectRatio:false,
     plugins:{
-      legend:{display:false},
-      title:{display:true,text:'Fixed/Variable Split by MESO',font:{size:13}},
+      legend:{position:'bottom',labels:{font:{size:11}}},
+      title:{display:true,text:'Fixed vs Variable Split (%)',font:{size:13}},
       datalabels:{
         display: true,
-        formatter: function(value, ctx) {
-          const ds = ctx.chart.data.datasets[ctx.datasetIndex];
-          const total = ds.data.reduce((a,b) => a+b, 0);
-          const pct = (value / total * 100).toFixed(0);
-          const label = ctx.dataIndex === 0 ? 'Fixed' : 'Variable';
-          return label + '\n' + pct + '%';
-        },
-        color: '#fff',
-        font: {weight:'bold', size:11},
-        textAlign: 'center'
+        anchor:'center', align:'center',
+        formatter: function(value) { return value.toFixed(0) + '%'; },
+        color:'#1a1a2e', font:{weight:'bold',size:13}
       }
+    },
+    scales:{
+      x:{stacked:true, max:100, ticks:{callback:v=>v+'%'}},
+      y:{stacked:true}
     }
   }
 });
