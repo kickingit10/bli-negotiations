@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-13T09:03:42.601816",
+  "generated": "2026-03-13",
   "current_contract": {
     "agreement_id": "C8882435",
     "term": "02/01/2025 \u2013 06/05/2026",
@@ -39,15 +39,15 @@
     }
   },
   "volume_stats": {
-    "weeks": 48,
-    "date_range": "04/04/2025 \u2013 02/27/2026",
-    "avg_del_stops": 1804,
-    "avg_del_pkgs": 8039,
-    "avg_ecom_stops": 5836,
-    "avg_ecom_pkgs": 6915,
-    "avg_lp_pct": 7.84,
-    "avg_net": 31444.52,
-    "total_net": 1509337.05,
+    "weeks": 49,
+    "date_range": "04/04/2025 \u2013 03/06/2026",
+    "avg_del_stops": 1807,
+    "avg_del_pkgs": 8061,
+    "avg_ecom_stops": 5833,
+    "avg_ecom_pkgs": 6910,
+    "avg_lp_pct": 7.83,
+    "avg_net": 31437.82,
+    "total_net": 1540453.13,
     "avg_drivers": 18.2
   },
   "rate_comparison": [
@@ -3522,6 +3522,29 @@
       "net_amount": 30355.43,
       "num_drivers": 19,
       "driver_days": 79
+    },
+    {
+      "week_ending": "03/06/2026",
+      "del_stops": 1945,
+      "del_pkgs": 9115,
+      "del_stop_amt": 4395.7,
+      "del_pkg_amt": 1640.7,
+      "pu_stops": 411,
+      "pu_pkgs": 4384,
+      "ecom_stops": 5705,
+      "ecom_pkgs": 6693,
+      "lp_pct": 7.07,
+      "lp_amt": 1120.0,
+      "service_charge": 10312.0,
+      "apparel": 200.0,
+      "vehicles": 600.0,
+      "pd_total": 19626.69,
+      "other_pd": 11489.39,
+      "total_charges": 31116.08,
+      "chargebacks": 0,
+      "net_amount": 31116.08,
+      "num_drivers": 17,
+      "driver_days": 82
     }
   ]
 }

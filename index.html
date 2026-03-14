@@ -7,12 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
-:root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#6366f1;--old:#8b5cf6;--bg:#f0f2f5;--card:#fff;--text:#374151;--card-shadow:rgba(0,0,0,.06);--tip-bg:#eff6ff;--tip-border:#bfdbfe;--tip-heading:#1d4ed8;--tip-text:#1e40af;--insight-bg:#f0fdf4;--insight-border:#bbf7d0;--insight-heading:#15803d;--insight-text:#166534;--warn-bg:#fffbeb;--warn-border:#f59e0b;--warn-text:#92400e;--warn-heading:#78350f;--hover-bg:#f8fafc;--counter-th-bg:#fffbeb;--datalabel-color:#1a1a2e;--input-bg:rgba(255,255,255,0.1);--input-border:rgba(255,255,255,0.2)}
-@media(prefers-color-scheme:dark){
-:root{--dark:#e2e8f0;--gray:#9ca3af;--light:#1e1e30;--border:#2d2d44;--bg:#0f0f1a;--card:#1a1a2e;--text:#9ca3af;--card-shadow:rgba(0,0,0,.3);--tip-bg:#1a1a2e;--tip-border:#1e3a5f;--tip-heading:#60a5fa;--tip-text:#93c5fd;--insight-bg:#1a1a2e;--insight-border:#064e3b;--insight-heading:#86efac;--insight-text:#6ee7b7;--warn-bg:#1a1a2e;--warn-border:#92400e;--warn-text:#fbbf24;--warn-heading:#fde68a;--hover-bg:#252540;--counter-th-bg:#1e1e30;--datalabel-color:#e2e8f0;--input-bg:rgba(255,255,255,0.08);--input-border:rgba(255,255,255,0.15)}
-}
+:root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#6366f1;--old:#8b5cf6}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark);min-height:100vh}
 
 /* Nav */
 .topnav{background:#1a1a2e;padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
@@ -23,7 +20,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* Hero */
 .hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:48px 20px 72px;text-align:center;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:var(--bg);border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
+.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:#f0f2f5;border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
 .hero h1{font-size:28px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
 .hero .sub{font-size:15px;opacity:0.92;margin-bottom:16px;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.5}
 .deadline{display:inline-block;background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;backdrop-filter:blur(4px)}
@@ -33,24 +30,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .container{max-width:1200px;margin:-30px auto 0;padding:0 20px 60px;position:relative;z-index:1}
 
 /* Cards */
-.card{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 1px 4px var(--card-shadow);margin-bottom:20px}
+.card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:20px}
 .card h2{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--dark);display:flex;align-items:center;gap:8px}
 .card h2 .icon{font-size:20px}
 
 /* Explainer card */
-.explainer{background:var(--card);border-radius:12px;padding:28px;box-shadow:0 2px 12px var(--card-shadow);margin-bottom:24px;border-left:5px solid var(--blue)}
+.explainer{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:24px;border-left:5px solid var(--blue)}
 .explainer h2{font-size:19px;font-weight:800;margin-bottom:14px;color:var(--dark)}
 .explainer .context-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px}
-.explainer .ctx-box{background:var(--light);border-radius:10px;padding:16px;border:1px solid var(--border);color:var(--dark)}
+.explainer .ctx-box{background:var(--light);border-radius:10px;padding:16px;border:1px solid var(--border)}
 .explainer .ctx-box.old{border-left:4px solid var(--old)}
 .explainer .ctx-box.new{border-left:4px solid var(--green)}
 .explainer .ctx-box h3{font-size:14px;font-weight:700;margin-bottom:6px}
-.explainer .ctx-box p{font-size:13px;color:var(--text);line-height:1.6;margin:0}
+.explainer .ctx-box p{font-size:13px;color:#374151;line-height:1.6;margin:0}
 .explainer .ctx-box .tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
 .explainer .ctx-box.old .tag{background:#ede9fe;color:#7c3aed}
 .explainer .ctx-box.new .tag{background:#d1fae5;color:#059669}
-.explainer .approach{background:var(--tip-bg);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.7;color:var(--tip-text)}
-.explainer .approach strong{color:var(--tip-heading)}
+.explainer .approach{background:#eff6ff;border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.7;color:#1e40af}
+.explainer .approach strong{color:#1d4ed8}
 .legend-strip{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .legend-strip .item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--gray)}
 .legend-strip .dot{width:12px;height:12px;border-radius:3px}
@@ -63,15 +60,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* Metric cards */
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.metric-card{background:var(--card);border-radius:10px;padding:18px;box-shadow:0 1px 4px var(--card-shadow);text-align:center}
+.metric-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-align:center}
 .metric-card .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray);margin-bottom:4px}
 .metric-card .value{font-size:22px;font-weight:800;color:var(--dark)}
 .metric-card .sub{font-size:11px;color:var(--gray);margin-top:2px}
-.metric-card.highlight{border:2px solid var(--green);background:var(--insight-bg)}
+.metric-card.highlight{border:2px solid var(--green);background:#f0fdf4}
 
 /* MESO comparison cards */
 .meso-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-.meso-card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 1px 4px var(--card-shadow);border-top:4px solid var(--gray);position:relative}
+.meso-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-top:4px solid var(--gray);position:relative}
 .meso-card.m1{border-top-color:var(--m1)}
 .meso-card.m2{border-top-color:var(--m2)}
 .meso-card.m3{border-top-color:var(--m3)}
@@ -81,7 +78,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .meso-card .breakdown{font-size:12px;color:var(--gray);line-height:1.8}
 .meso-card .breakdown .row{display:flex;justify-content:space-between}
 .meso-card .breakdown .row.sep{border-top:1px solid var(--border);padding-top:6px;margin-top:6px;font-weight:700;color:var(--dark)}
-.meso-card .bar{height:6px;border-radius:3px;background:var(--border);margin:12px 0 4px;overflow:hidden;display:flex}
+.meso-card .bar{height:6px;border-radius:3px;background:#e5e7eb;margin:12px 0 4px;overflow:hidden;display:flex}
 .meso-card .bar .fixed{background:var(--blue)}
 .meso-card .bar .variable{background:var(--amber)}
 .meso-card .bar-legend{display:flex;gap:12px;font-size:10px;color:var(--gray)}
@@ -93,11 +90,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .rate-table{width:100%;border-collapse:collapse;font-size:13px}
 .rate-table th{background:var(--light);padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);position:sticky;top:0}
 .rate-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
-.rate-table tr:hover{background:var(--hover-bg)}
+.rate-table tr:hover{background:#f8fafc}
 .rate-table .num{text-align:right;font-variant-numeric:tabular-nums}
-.rate-table .best{background:var(--insight-bg);font-weight:700;color:var(--green)}
+.rate-table .best{background:#f0fdf4;font-weight:700;color:var(--green)}
 .rate-table .worst{color:var(--gray)}
-.rate-table .highlight-row{background:var(--warn-bg)}
+.rate-table .highlight-row{background:#fffbeb}
 
 /* Charts */
 .chart-container{position:relative;height:320px;margin:12px 0}
@@ -119,12 +116,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .section-header .badge.comparison{background:#fef3c7;color:#92400e}
 
 /* Insight box */
-.insight{background:var(--tip-bg);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.7;color:var(--tip-text)}
-.insight strong{color:var(--tip-heading)}
-.insight.warn{background:var(--warn-bg);border-left-color:var(--amber);color:var(--warn-text)}
-.insight.warn strong{color:var(--warn-heading)}
-.insight.good{background:var(--insight-bg);border-left-color:var(--green);color:var(--insight-text)}
-.insight.good strong{color:var(--insight-heading)}
+.insight{background:#eff6ff;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.7;color:#1e40af}
+.insight strong{color:#1d4ed8}
+.insight.warn{background:#fffbeb;border-left-color:var(--amber);color:#92400e}
+.insight.warn strong{color:#78350f}
+.insight.good{background:#f0fdf4;border-left-color:var(--green);color:#065f46}
+.insight.good strong{color:#064e3b}
 
 /* Footer */
 .footer{text-align:center;padding:20px;color:var(--gray);font-size:11px}
@@ -151,13 +148,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 }
 
 /* Negotiation strategy */
-.strategy-card{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 2px 8px var(--card-shadow);margin-bottom:16px;border-left:5px solid var(--amber)}
+.strategy-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:16px;border-left:5px solid var(--amber)}
 .strategy-card h3{font-size:16px;font-weight:700;margin-bottom:10px}
 .strategy-card .point{margin-bottom:14px}
 .strategy-card .point strong{color:var(--dark)}
-.strategy-card .point p{font-size:13px;line-height:1.7;color:var(--text);margin:4px 0 0}
+.strategy-card .point p{font-size:13px;line-height:1.7;color:#374151;margin:4px 0 0}
 .counter-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
-.counter-table th{background:var(--counter-th-bg);padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid #f59e0b}
+.counter-table th{background:#fffbeb;padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid #f59e0b}
 .counter-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
 .counter-table .lever{font-weight:700;color:var(--dark);white-space:nowrap}
 .counter-table .your-pos{color:#059669;font-weight:600}
@@ -405,7 +402,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
   <div class="point">
     <strong>5. E-Commerce Is Growing — Lock In Better Rates</strong>
-    <p>Your e-commerce stops average 5,836/week and represent the fastest-growing segment. MESO 2 offers $1.52/stop (up from $1.50 on the current contract, but below MESO 3's $1.68). Push for a higher e-commerce rate — even $0.13 more per stop adds ~$39,400/year.</p>
+    <p>Your e-commerce stops average 5,833/week and represent the fastest-growing segment. MESO 2 offers $1.52/stop (up from $1.50 on the current contract, but below MESO 3's $1.68). Push for a higher e-commerce rate — even $0.13 more per stop adds ~$39,400/year.</p>
   </div>
   <div class="point" id="strategy-deadline"></div>
 </div>
@@ -463,18 +460,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 // ── Load data and render ─────────────────────────────────────────
-const DARK=window.matchMedia('(prefers-color-scheme:dark)').matches;
-const GRID_COLOR=DARK?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)';
-const TICK_COLOR=DARK?'#9ca3af':'#6b7280';
-const LEGEND_COLOR=DARK?'#e2e8f0':'#1a1a2e';
-Chart.defaults.color=TICK_COLOR;
-Chart.defaults.borderColor=GRID_COLOR;
-Chart.defaults.plugins.legend.labels.color=LEGEND_COLOR;
-Chart.defaults.plugins.tooltip.backgroundColor=DARK?'#1e1e30':'rgba(0,0,0,0.8)';
-Chart.defaults.plugins.tooltip.titleColor=DARK?'#e2e8f0':'#fff';
-Chart.defaults.plugins.tooltip.bodyColor=DARK?'#9ca3af':'#fff';
-window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>location.reload());
-
 fetch('data.json').then(r=>r.json()).then(D=>{
 
 // Disable datalabels globally, enable per-chart
@@ -610,7 +595,7 @@ new Chart(document.getElementById('chart-breakdown'),{
           });
           return '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
         },
-        font:{weight:'bold',size:13}, color:DARK?'#e2e8f0':'#1a1a2e'
+        font:{weight:'bold',size:13}, color:'#1a1a2e'
       }
     },
     scales:{
@@ -688,7 +673,7 @@ new Chart(document.getElementById('chart-fixvar-dollars'),{
           });
           return '$' + total.toLocaleString('en-US', {maximumFractionDigits:0});
         },
-        font:{weight:'bold',size:12}, color:DARK?'#e2e8f0':'#1a1a2e'
+        font:{weight:'bold',size:12}, color:'#1a1a2e'
       }
     },
     scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>fmt(v)}}}
@@ -837,7 +822,7 @@ new Chart(document.getElementById('chart-fedex-vs-actual'),{
         formatter: function(value) {
           return '$' + (value/1000000).toFixed(2) + 'M';
         },
-        font:{weight:'bold',size:11}, color:DARK?'#e2e8f0':'#1a1a2e'
+        font:{weight:'bold',size:11}, color:'#1a1a2e'
       }
     },
     scales:{y:{ticks:{callback:v=>fmt(v)},beginAtZero:false}}
@@ -920,7 +905,7 @@ const counterData = [
     lever: 'E-Com Stop',
     meso2: '$1.52/stop',
     target: '$1.65/stop',
-    rationale: 'E-commerce is 5,836 stops/wk and growing. At $0.13 more, that\'s ~$39,400/year. This is FedEx\'s fastest-growing segment — you deliver it.'
+    rationale: 'E-commerce is 5,833 stops/wk and growing. At $0.13 more, that\'s ~$39,400/year. This is FedEx\'s fastest-growing segment — you deliver it.'
   },
   {
     lever: 'Liquidated Damage',

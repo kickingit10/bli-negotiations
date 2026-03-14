@@ -7,12 +7,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
 <style>
 :root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;
---m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#8b5cf6;--bg:#f0f2f5;--card:#fff;--text:#374151;--card-shadow:rgba(0,0,0,.06);--hover-bg:#f8fafc;--tip-bg:#eff6ff;--tip-border:#bfdbfe;--tip-heading:#1d4ed8;--tip-text:#1e40af}
-@media(prefers-color-scheme:dark){
-:root{--dark:#e2e8f0;--gray:#9ca3af;--light:#1e1e30;--border:#2d2d44;--bg:#0f0f1a;--card:#1a1a2e;--text:#9ca3af;--card-shadow:rgba(0,0,0,.3);--hover-bg:#252540;--tip-bg:#1a1a2e;--tip-border:#1e3a5f;--tip-heading:#60a5fa;--tip-text:#93c5fd}
-}
+--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#8b5cf6}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--dark)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark)}
 
 .topnav{background:#1a1a2e;padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
 .topnav a{color:#94a3b8;text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;transition:all .15s}
@@ -21,7 +18,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topnav .logo{color:#fff;font-weight:800;font-size:15px;letter-spacing:-0.5px;margin-right:auto}
 
 .hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:36px 20px 56px;text-align:center;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:var(--bg);border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
+.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:#f0f2f5;border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
 .hero h1{font-size:24px;font-weight:800;margin-bottom:4px}
 .hero .sub{font-size:14px;opacity:0.9;max-width:700px;margin:0 auto 12px}
 .deadline{display:inline-block;background:rgba(255,255,255,0.15);padding:6px 16px;border-radius:16px;font-size:12px;font-weight:700}
@@ -29,7 +26,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 .container{max-width:1280px;margin:-20px auto 0;padding:0 20px 60px;position:relative;z-index:1}
 
-.section{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 1px 4px var(--card-shadow);margin-bottom:20px}
+.section{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px}
 .section h2{font-size:16px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
 .section h2 .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
 .section .desc{font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.5}
@@ -51,23 +48,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .meso-card .meso-sub{font-size:11px;color:var(--gray);margin-bottom:10px}
 .meso-card .meso-val{font-size:24px;font-weight:800}
 .meso-card .meso-label{font-size:10px;text-transform:uppercase;color:var(--gray);letter-spacing:.5px;font-weight:600;margin-bottom:2px}
-.meso-card .meso-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)}
+.meso-card .meso-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #f1f5f9}
 .meso-card .meso-row:last-child{border:none}
 .meso-card .meso-row .label{color:var(--gray)}.meso-card .meso-row .val{font-weight:600;font-variant-numeric:tabular-nums}
 
 .toggle-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.toggle-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:12px;font-weight:600;color:var(--gray);transition:all .15s}
+.toggle-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray);transition:all .15s}
 .toggle-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.toggle-btn:hover:not(.active){background:var(--light)}
+.toggle-btn:hover:not(.active){background:#f1f5f9}
 
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:var(--light);padding:8px 6px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.3px}
-td{padding:7px 6px;border-bottom:1px solid var(--border)}
+th{background:#f8fafc;padding:8px 6px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:7px 6px;border-bottom:1px solid #f1f5f9}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 th.num{text-align:right}
-tr:hover{background:var(--hover-bg)}
+tr:hover{background:#f8fafc}
 .positive{color:var(--green)}.negative{color:var(--red)}
-.best{background:var(--insight-bg,#ecfdf5);font-weight:700}.worst{background:var(--warn-bg,#fef2f2)}
+.best{background:#ecfdf5;font-weight:700}.worst{background:#fef2f2}
 
 .slider-group{margin-bottom:14px}
 .slider-group label{display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px}
@@ -76,7 +73,7 @@ tr:hover{background:var(--hover-bg)}
 .slider-group .range-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--gray)}
 
 .impact-bar{display:flex;align-items:center;gap:8px;font-size:12px;margin:4px 0}
-.impact-bar .bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.impact-bar .bar{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
 .impact-bar .bar-fill{height:100%;border-radius:4px;transition:width .3s}
 
 .kpi-mini{text-align:center;padding:12px}
@@ -113,7 +110,7 @@ canvas{max-height:300px}
 
 <!-- Global View Toggle -->
 <div style="display:flex;justify-content:center;margin-bottom:16px">
-  <div style="background:var(--card);border-radius:10px;padding:6px;box-shadow:0 1px 4px var(--card-shadow);display:inline-flex;gap:4px">
+  <div style="background:#fff;border-radius:10px;padding:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:inline-flex;gap:4px">
     <button class="toggle-btn active" id="viewAnnual" onclick="setTermView('annual')">52-Week Annualized View</button>
     <button class="toggle-btn" id="viewFull" onclick="setTermView('full')">Full 113-Week Contract</button>
   </div>
@@ -159,7 +156,7 @@ canvas{max-height:300px}
       <div id="sliders"></div>
     </div>
     <div>
-      <div style="background:var(--light);border-radius:10px;padding:18px;margin-bottom:12px">
+      <div style="background:#f8fafc;border-radius:10px;padding:18px;margin-bottom:12px">
         <div class="kpi-mini">
           <div class="lbl" id="sliderTotalLabel">Custom Rate Total (52-wk)</div>
           <div class="val" id="sliderTotal" style="color:var(--blue)">—</div>
@@ -210,18 +207,6 @@ canvas{max-height:300px}
 </div>
 
 <script>
-const DARK=window.matchMedia('(prefers-color-scheme:dark)').matches;
-const GRID_COLOR=DARK?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)';
-const TICK_COLOR=DARK?'#9ca3af':'#6b7280';
-const LEGEND_COLOR=DARK?'#e2e8f0':'#1a1a2e';
-Chart.defaults.color=TICK_COLOR;
-Chart.defaults.borderColor=GRID_COLOR;
-Chart.defaults.plugins.legend.labels.color=LEGEND_COLOR;
-Chart.defaults.plugins.tooltip.backgroundColor=DARK?'#1e1e30':'rgba(0,0,0,0.8)';
-Chart.defaults.plugins.tooltip.titleColor=DARK?'#e2e8f0':'#fff';
-Chart.defaults.plugins.tooltip.bodyColor=DARK?'#9ca3af':'#fff';
-window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>location.reload());
-
 // ===== DATA =====
 const CONTRACT = {
   id:'C8892307', term:'06/06/2026 – 08/04/2028', weeks:113, basePump:3.849, threshold:2724, vehicles:15,
@@ -264,7 +249,7 @@ const FEDEX_VOL = {
 const ACTUAL_VOL = {
   label:'48-Week Average',weeks_sampled:48,
   nec_stops_wk:2181, nec_pkgs_wk:11660, del_pkgs_wk:14954, lp_pct:7.84,
-  ec_stops_wk:5836, ec_pkgs_wk:6915,
+  ec_stops_wk:5833, ec_pkgs_wk:6910,
   total_net:1509337.05, avg_net_wk:31444.52
 };
 
@@ -697,7 +682,7 @@ function renderPeriodImpact(){
 
   // Totals row
   const fmT = v => `<strong class="${v>=0?'positive':'negative'}">${v>=0?'+':''}${fm(Math.round(v))}</strong>`;
-  html += `<tr style="border-top:3px solid var(--dark);background:var(--light)">
+  html += `<tr style="border-top:3px solid var(--dark);background:#f8fafc">
     <td><strong>TOTAL ${lbl} Impact</strong></td>
     <td></td>
     <td></td><td class="num">${fmT(totals.m1)}</td>
