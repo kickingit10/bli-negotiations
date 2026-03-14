@@ -6,9 +6,12 @@
 <title>How to Use These Tools — BLI Negotiations</title>
 <style>
 :root{--blue:#2563eb;--dark:#1a1a2e;--gray:#6b7280;--light:#f8fafc;--border:#e2e8f0;--green:#059669;--red:#dc2626;--amber:#d97706;
---m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#8b5cf6}
+--m1:#3b82f6;--m2:#10b981;--m3:#f59e0b;--current:#8b5cf6;--bg:#f0f2f5;--card:#fff;--text:#374151;--card-shadow:rgba(0,0,0,.06);--hover-bg:#f8fafc;--tip-bg:#ecfdf5;--tip-border:#059669;--tip-heading:#065f46;--tip-text:#065f46;--callout-bg:#fef3c7;--callout-border:#f59e0b;--callout-text:#92400e;--concept-bg:#f8fafc;--page-highlight-bg:#eff6ff;--demo-btn-bg:#fff}
+@media(prefers-color-scheme:dark){
+:root{--dark:#e2e8f0;--gray:#9ca3af;--light:#1e1e30;--border:#2d2d44;--bg:#0f0f1a;--card:#1a1a2e;--text:#9ca3af;--card-shadow:rgba(0,0,0,.3);--hover-bg:#252540;--tip-bg:#1a1a2e;--tip-border:#064e3b;--tip-heading:#86efac;--tip-text:#6ee7b7;--callout-bg:#1a1a2e;--callout-border:#92400e;--callout-text:#fbbf24;--concept-bg:#1e1e30;--page-highlight-bg:#1e1e30;--demo-btn-bg:#1a1a2e}
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:var(--dark)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--dark)}
 
 .topnav{background:#1a1a2e;padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
 .topnav a{color:#94a3b8;text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;transition:all .15s}
@@ -17,13 +20,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topnav .logo{color:#fff;font-weight:800;font-size:15px;letter-spacing:-0.5px;margin-right:auto}
 
 .hero{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:36px 20px 56px;text-align:center;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:#f0f2f5;border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
+.hero::after{content:'';position:absolute;bottom:-40px;left:0;right:0;height:80px;background:var(--bg);border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.5)}
 .hero h1{font-size:24px;font-weight:800;margin-bottom:4px}
 .hero .sub{font-size:14px;opacity:0.9;max-width:700px;margin:0 auto}
 
 .container{max-width:900px;margin:-20px auto 0;padding:0 20px 60px;position:relative;z-index:1}
 
-.section{background:#fff;border-radius:12px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px}
+.section{background:var(--card);border-radius:12px;padding:24px 28px;box-shadow:0 1px 4px var(--card-shadow);margin-bottom:20px}
 .section h2{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
 .section h2 .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
 .section h2 .chevron{font-size:14px;margin-left:auto;transition:transform .2s;color:var(--gray)}
@@ -31,27 +34,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .section.collapsed h2 .chevron{transform:rotate(-90deg)}
 
 .section-body{margin-top:4px}
-.section-body p{font-size:13px;line-height:1.7;color:#374151;margin-bottom:12px}
+.section-body p{font-size:13px;line-height:1.7;color:var(--text);margin-bottom:12px}
 .section-body p:last-child{margin-bottom:0}
 
 /* Page cards */
 .page-map{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
-.page-card{border:2px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;text-decoration:none;color:inherit;display:block}
+.page-card{border:2px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;text-decoration:none;color:inherit;display:block;background:var(--card)}
 .page-card:hover{border-color:var(--blue);box-shadow:0 4px 12px rgba(37,99,235,.12);transform:translateY(-1px)}
 .page-card .step{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
 .page-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
 .page-card .page-desc{font-size:12px;color:var(--gray);line-height:1.5}
 .page-card .page-answers{font-size:11px;color:var(--green);font-weight:600;margin-top:8px}
-.page-card.highlight{border-color:var(--blue);background:#eff6ff}
+.page-card.highlight{border-color:var(--blue);background:var(--page-highlight-bg)}
 
 /* Concept blocks */
-.concept{border-left:3px solid var(--blue);padding:10px 14px;margin:10px 0;background:#f8fafc;border-radius:0 8px 8px 0}
+.concept{border-left:3px solid var(--blue);padding:10px 14px;margin:10px 0;background:var(--concept-bg);border-radius:0 8px 8px 0}
 .concept h4{font-size:13px;font-weight:700;margin-bottom:2px}
-.concept p{font-size:12px;color:#374151;margin-bottom:0;line-height:1.6}
+.concept p{font-size:12px;color:var(--text);margin-bottom:0;line-height:1.6}
 
 /* Glossary */
 .glossary{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
-.gloss-item{font-size:12px;padding:6px 0;border-bottom:1px solid #f1f5f9}
+.gloss-item{font-size:12px;padding:6px 0;border-bottom:1px solid var(--border)}
 .gloss-item strong{color:var(--dark)}
 .gloss-item span{color:var(--gray)}
 
@@ -64,18 +67,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* Toggle explainer */
 .toggle-demo{display:flex;gap:8px;margin:10px 0;justify-content:center}
-.demo-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;border:2px solid var(--border);background:#fff;color:var(--gray)}
+.demo-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;border:2px solid var(--border);background:var(--demo-btn-bg);color:var(--gray)}
 .demo-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 
 /* Two-column concept */
 .two-concepts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
 /* Callout */
-.callout{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6}
-.callout strong{color:#92400e}
+.callout{background:var(--callout-bg);border:1px solid var(--callout-border);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6;color:var(--callout-text)}
+.callout strong{color:var(--callout-text)}
 
-.tip{background:#ecfdf5;border:1px solid #059669;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6}
-.tip strong{color:#065f46}
+.tip{background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6;color:var(--tip-text)}
+.tip strong{color:var(--tip-heading)}
 
 @media(max-width:700px){
   .page-map,.glossary,.two-concepts{grid-template-columns:1fr}
@@ -312,7 +315,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <!-- SECTION 7: Glossary -->
 <div class="section" id="s7">
-  <h2 onclick="toggle('s7')">Rate Glossary <span class="badge" style="background:#f1f5f9;color:var(--gray)">Quick Reference</span> <span class="chevron">&#9660;</span></h2>
+  <h2 onclick="toggle('s7')">Rate Glossary <span class="badge" style="background:var(--light);color:var(--gray)">Quick Reference</span> <span class="chevron">&#9660;</span></h2>
   <div class="section-body">
     <p>Every rate component in your FedEx contract, explained in plain English:</p>
     <div class="glossary">
